@@ -1,0 +1,76 @@
+{
+  "env": {
+    "$schema": {
+      "tyle": "string",
+      "values": ["dev", "staging", "prod"]
+    }
+  },
+  "version": {
+    "$schema": {
+      "type": "string",
+      "regex": "v[0-9]+"
+    }
+  },
+  "internal_service": {
+    "url": {
+      "$schema": {
+        "type": "string",
+        "required": true
+      }
+    },
+    "port": {
+      "$schema": {
+        "type": "integer" ,
+        "default": 8080,
+        "interval": {
+          "min": 80,
+          "max": 18080
+        }
+      }
+    },
+    "username": {
+      "$schema": {
+        "type": "string"
+      }
+    },
+    "password": {
+      "$schema": {
+        "type": "string"
+      }
+    }
+  },
+  "postgres": {
+    "url": {
+      "$schema": {
+        "type": "string",
+        "values": ["localhost", "postgres"]
+      }
+    },
+    "port": {
+      "$schema": {
+        "type": "integer",
+        "regex": "^543[2-9]{1}"
+      }
+    },
+    "username": {
+      "$schema": {
+        "type": "string",
+        "required": true
+      }
+    },
+    "password": {
+      "$schema": {
+        "type": "string",
+        "required": true
+      }
+    }
+  },
+  "circuit_breaker": {
+    "threshold": {
+      "$schema": {
+        "type": "float",
+        "default": 0.6
+      }
+    }
+  }
+}
