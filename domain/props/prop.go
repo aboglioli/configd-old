@@ -12,7 +12,7 @@ type Prop interface {
 	Values() []interface{}
 	Regex() string
 	Interval() *interval
-	Props() []Prop
+	Props() map[string]Prop
 }
 
 var _ Prop = (*prop)(nil)
@@ -25,7 +25,7 @@ type prop struct {
 	values   []interface{}
 	regex    string
 	interval *interval
-	props    []Prop
+	props    map[string]Prop
 }
 
 func newValue(name string, t PropType, opts ...Option) (*prop, error) {
@@ -102,6 +102,6 @@ func (p *prop) Interval() *interval {
 	return p.interval
 }
 
-func (p *prop) Props() []Prop {
+func (p *prop) Props() map[string]Prop {
 	return p.props
 }

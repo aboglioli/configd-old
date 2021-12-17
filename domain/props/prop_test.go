@@ -12,14 +12,6 @@ func ok(err error) {
 	}
 }
 
-func propsToInterface(props ...*prop) []Prop {
-	ps := make([]Prop, len(props))
-	for i, p := range props {
-		ps[i] = p
-	}
-	return ps
-}
-
 func TestBuildProps(t *testing.T) {
 	tests := []struct {
 		name     string
@@ -148,21 +140,21 @@ func TestBuildProps(t *testing.T) {
 				t:        OBJECT,
 				name:     "obj",
 				required: true,
-				props: propsToInterface(
-					&prop{
+				props: map[string]Prop{
+					"str": &prop{
 						t:        STRING,
 						name:     "str",
 						required: true,
 						def:      "default",
 						values:   []interface{}{"str1", "str2"},
 					},
-					&prop{
+					"num": &prop{
 						t:        INT,
 						name:     "num",
 						values:   []interface{}{1, 5, 10},
 						interval: &interval{0, 10},
 					},
-				),
+				},
 			},
 		},
 	}

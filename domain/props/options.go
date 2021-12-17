@@ -117,7 +117,14 @@ func WithProps(props ...Prop) Option {
 			return errors.New(fmt.Sprintf("%s cannot have subproperties", p.t))
 		}
 
-		p.props = props
+		if p.props == nil {
+			p.props = make(map[string]Prop)
+		}
+
+		for _, prop := range props {
+			p.props[prop.Name()] = prop
+		}
+
 		return nil
 	}
 }
