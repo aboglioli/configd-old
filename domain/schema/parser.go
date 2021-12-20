@@ -1,4 +1,4 @@
-package parser
+package schema
 
 import (
 	"encoding/json"
@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	"github.com/aboglioli/configd/domain/props"
-	"github.com/aboglioli/configd/domain/schema"
 	"github.com/mitchellh/mapstructure"
 )
 
@@ -20,7 +19,7 @@ type SchemaInterval struct {
 	Max float64 `mapstructure:"max"`
 }
 
-type Schema struct {
+type schema struct {
 	Type     string          `mapstructure:"type"`
 	Default  interface{}     `mapstructure:"default"`
 	Required bool            `mapstructure:"required"`
@@ -29,18 +28,27 @@ type Schema struct {
 	Interval *SchemaInterval `mapstructure:"interval"`
 }
 
-func FromJson(data string) (schema.Schema, error) {
+func FromJson(data string) (Schema, error) {
 	var m map[string]interface{}
 	if err := json.Unmarshal([]byte(data), &m); err != nil {
 		return nil, err
 	}
 
-	props, err := parseProps(m)
+	schema, err := FromMap(m)
 	if err != nil {
 		return nil, err
 	}
 
-	s, err := schema.NewSchema(props...)
+	return schema, nil
+}
+
+func FromMap(data map[string]interface{}) (Schema, error) {
+	props, err := parseProps(data)
+	if err != nil {
+		return nil, err
+	}
+
+	s, err := NewSchema(props...)
 	if err != nil {
 		return nil, err
 	}
@@ -56,7 +64,7 @@ func parseProps(m map[string]interface{}) ([]props.Prop, error) {
 		if v, ok := v.(map[string]interface{}); ok {
 			// Schema
 			if v, ok := v[SCHEMA_KEY]; ok {
-				var s Schema
+				var s schema
 				if err := mapstructure.Decode(v, &s); err != nil {
 					return nil, err
 				}
@@ -91,7 +99,7 @@ func parseProps(m map[string]interface{}) ([]props.Prop, error) {
 	return ps, nil
 }
 
-func parseSchemaProp(propName string, schema *Schema) (props.Prop, error) {
+func parseSchemaProp(propName string, schema *schema) (props.Prop, error) {
 	// Parse options
 	opts := make([]props.Option, 0)
 	opts = append(opts, props.WithRequired(schema.Required))

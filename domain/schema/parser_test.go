@@ -1,10 +1,9 @@
-package parser
+package schema
 
 import (
 	"testing"
 
 	"github.com/aboglioli/configd/domain/props"
-	"github.com/aboglioli/configd/domain/schema"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -22,7 +21,7 @@ func TestSchemaFromJson(t *testing.T) {
 	tests := []struct {
 		name     string
 		args     args
-		expected func() schema.Schema
+		expected func() Schema
 		err      bool
 	}{
 		{
@@ -85,7 +84,7 @@ func TestSchemaFromJson(t *testing.T) {
 					}
 				`,
 			},
-			expected: func() schema.Schema {
+			expected: func() Schema {
 				// Env
 				env, err := props.NewString("env", props.WithValues("dev", "staging", "prod"))
 				ok(err)
@@ -124,7 +123,7 @@ func TestSchemaFromJson(t *testing.T) {
 				nestedObject, err := props.NewObject("nested_object", props.WithProps(innerObject))
 				ok(err)
 
-				s, err := schema.NewSchema(
+				s, err := NewSchema(
 					env,
 					version,
 					internalService,
@@ -136,11 +135,104 @@ func TestSchemaFromJson(t *testing.T) {
 				return s
 			},
 		},
+		{
+			name: "schema without type",
+			args: args{
+				json: `
+					{
+					  "env":{
+						"$schema":{
+						  "type":"string",
+						  "values":[
+							"dev",
+							"staging",
+							"prod"
+						  ]
+						}
+					  },
+					  "version":{
+						"$schema":{
+						  "regex":"v[0-9]+"
+						}
+					  },
+					}
+				`,
+			},
+			expected: func() Schema {
+				return nil
+			},
+			err: true,
+		},
+		{
+			name: "empty schema",
+			args: args{
+				json: `{}`,
+			},
+			expected: func() Schema {
+				return nil
+			},
+			err: true,
+		},
 	}
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			schema, err := FromJson(test.args.json)
+
+			assert.Equal(t, test.expected(), schema)
+			if test.err {
+				assert.NotNil(t, err)
+			} else {
+				assert.Nil(t, err)
+			}
+		})
+	}
+}
+
+func TestSchemaFromMAp(t *testing.T) {
+	type args struct {
+		m map[string]interface{}
+	}
+
+	tests := []struct {
+		name     string
+		args     args
+		expected func() Schema
+		err      bool
+	}{
+		{
+			name: "valid",
+			args: args{
+				m: map[string]interface{}{
+					"env": map[string]interface{}{
+						"$schema": map[string]interface{}{
+							"type": "integer",
+							"interval": map[string]interface{}{
+								"min": 1,
+								"max": 256,
+							},
+						},
+					},
+				},
+			},
+			expected: func() Schema {
+				// Env
+				env, err := props.NewInteger("env", props.WithInterval(1, 256))
+				ok(err)
+
+				s, err := NewSchema(
+					env,
+				)
+				ok(err)
+
+				return s
+			},
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			schema, err := FromMap(test.args.m)
 
 			assert.Equal(t, test.expected(), schema)
 			if test.err {
