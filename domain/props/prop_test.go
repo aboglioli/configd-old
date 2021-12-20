@@ -37,23 +37,23 @@ func TestBuildProps(t *testing.T) {
 			},
 		},
 		{
-			name: "different prop type and values types",
+			name: "different prop type and enum types",
 			makeProp: func() (*prop, error) {
-				return NewString("env", WithValues(1, 2, 3))
+				return NewString("env", WithEnum(1, 2, 3))
 			},
 			err: true,
 		},
 		{
-			name: "different prop type and values types",
+			name: "different prop type and enum types",
 			makeProp: func() (*prop, error) {
-				return NewInteger("env", WithValues("str"))
+				return NewInteger("env", WithEnum("str"))
 			},
 			err: true,
 		},
 		{
-			name: "different prop type and values types",
+			name: "different prop type and enum types",
 			makeProp: func() (*prop, error) {
-				return NewString("env", WithValues("str", 256))
+				return NewString("env", WithEnum("str", 256))
 			},
 			err: true,
 		},
@@ -86,9 +86,9 @@ func TestBuildProps(t *testing.T) {
 			err: true,
 		},
 		{
-			name: "object with values",
+			name: "object with enum",
 			makeProp: func() (*prop, error) {
-				return NewObject("env", WithValues(1, 2, 3))
+				return NewObject("env", WithEnum(1, 2, 3))
 			},
 			err: true,
 		},
@@ -123,13 +123,13 @@ func TestBuildProps(t *testing.T) {
 					"str",
 					WithRequired(true),
 					WithDefault("default"),
-					WithValues("str1", "str2"),
+					WithEnum("str1", "str2"),
 				)
 				ok(err)
 
 				num, err := NewInteger(
 					"num",
-					WithValues(1, 5, 10),
+					WithEnum(1, 5, 10),
 					WithInterval(0, 10),
 				)
 				ok(err)
@@ -146,12 +146,12 @@ func TestBuildProps(t *testing.T) {
 						name:     "str",
 						required: true,
 						def:      "default",
-						values:   []interface{}{"str1", "str2"},
+						enum:     []interface{}{"str1", "str2"},
 					},
 					"num": &prop{
 						t:        INT,
 						name:     "num",
-						values:   []interface{}{1, 5, 10},
+						enum:     []interface{}{1, 5, 10},
 						interval: &interval{0, 10},
 					},
 				},

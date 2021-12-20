@@ -23,7 +23,7 @@ type schema struct {
 	Type     string          `mapstructure:"type"`
 	Default  interface{}     `mapstructure:"default"`
 	Required bool            `mapstructure:"required"`
-	Values   []interface{}   `mapstructure:"values"`
+	Enum     []interface{}   `mapstructure:"enum"`
 	Regex    string          `mapstructure:"regex"`
 	Interval *SchemaInterval `mapstructure:"interval"`
 }
@@ -108,8 +108,8 @@ func parseSchemaProp(propName string, schema *schema) (props.Prop, error) {
 		opts = append(opts, props.WithDefault(schema.Default))
 	}
 
-	if schema.Values != nil {
-		opts = append(opts, props.WithValues(schema.Values...))
+	if schema.Enum != nil {
+		opts = append(opts, props.WithEnum(schema.Enum...))
 	}
 
 	if schema.Regex != "" {

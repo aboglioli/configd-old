@@ -32,7 +32,7 @@ func TestSchemaFromJson(t *testing.T) {
 					  "env":{
 						"$schema":{
 						  "type":"string",
-						  "values":[
+						  "enum":[
 							"dev",
 							"staging",
 							"prod"
@@ -86,7 +86,7 @@ func TestSchemaFromJson(t *testing.T) {
 			},
 			expected: func() Schema {
 				// Env
-				env, err := props.NewString("env", props.WithValues("dev", "staging", "prod"))
+				env, err := props.NewString("env", props.WithEnum("dev", "staging", "prod"))
 				ok(err)
 
 				// Version
@@ -143,7 +143,7 @@ func TestSchemaFromJson(t *testing.T) {
 					  "env":{
 						"$schema":{
 						  "type":"string",
-						  "values":[
+						  "enut":[
 							"dev",
 							"staging",
 							"prod"

@@ -9,7 +9,7 @@ type Prop interface {
 	Type() PropType
 	Default() interface{}
 	Required() bool
-	Values() []interface{}
+	Enum() []interface{}
 	Regex() string
 	Interval() *interval
 	Props() map[string]Prop
@@ -22,7 +22,7 @@ type prop struct {
 	t        PropType
 	def      interface{}
 	required bool
-	values   []interface{}
+	enum     []interface{}
 	regex    string
 	interval *interval
 	props    map[string]Prop
@@ -90,8 +90,8 @@ func (p *prop) Required() bool {
 	return p.required
 }
 
-func (p *prop) Values() []interface{} {
-	return p.values
+func (p *prop) Enum() []interface{} {
+	return p.enum
 }
 
 func (p *prop) Regex() string {

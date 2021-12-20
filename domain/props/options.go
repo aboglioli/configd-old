@@ -52,34 +52,34 @@ func WithRequired(r bool) Option {
 	}
 }
 
-func WithValues(values ...interface{}) Option {
+func WithEnum(enum ...interface{}) Option {
 	return func(p *prop) error {
 		if p.t == OBJECT {
 			return errors.New(fmt.Sprintf("%s cannot have enum values", p.t))
 		}
 
-		for _, value := range values {
+		for _, value := range enum {
 			switch p.t {
 			case STRING:
 				if _, ok := value.(string); !ok {
-					return errors.New("string values expected")
+					return errors.New("string enum expected")
 				}
 			case INT:
 				if _, ok := value.(int); !ok {
-					return errors.New("integer values expected")
+					return errors.New("integer enum expected")
 				}
 			case FLOAT:
 				if _, ok := value.(float64); !ok {
-					return errors.New("float values expected")
+					return errors.New("float enum expected")
 				}
 			case BOOL:
 				if _, ok := value.(bool); !ok {
-					return errors.New("bool values expected")
+					return errors.New("bool enum expected")
 				}
 			}
 		}
 
-		p.values = values
+		p.enum = enum
 		return nil
 	}
 }
