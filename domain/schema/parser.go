@@ -28,13 +28,13 @@ type schema struct {
 	Interval *SchemaInterval `mapstructure:"interval"`
 }
 
-func FromJson(data string) (Schema, error) {
+func FromJson(name string, data string) (*Schema, error) {
 	var m map[string]interface{}
 	if err := json.Unmarshal([]byte(data), &m); err != nil {
 		return nil, err
 	}
 
-	schema, err := FromMap(m)
+	schema, err := FromMap(name, m)
 	if err != nil {
 		return nil, err
 	}
@@ -42,13 +42,13 @@ func FromJson(data string) (Schema, error) {
 	return schema, nil
 }
 
-func FromMap(data map[string]interface{}) (Schema, error) {
+func FromMap(name string, data map[string]interface{}) (*Schema, error) {
 	props, err := parseProps(data)
 	if err != nil {
 		return nil, err
 	}
 
-	s, err := NewSchema(props...)
+	s, err := NewSchema(name, props...)
 	if err != nil {
 		return nil, err
 	}

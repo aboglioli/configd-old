@@ -21,7 +21,7 @@ func TestSchemaFromJson(t *testing.T) {
 	tests := []struct {
 		name     string
 		args     args
-		expected func() Schema
+		expected func() *Schema
 		err      bool
 	}{
 		{
@@ -84,7 +84,7 @@ func TestSchemaFromJson(t *testing.T) {
 					}
 				`,
 			},
-			expected: func() Schema {
+			expected: func() *Schema {
 				// Env
 				env, err := props.NewString("env", props.WithEnum("dev", "staging", "prod"))
 				ok(err)
@@ -124,6 +124,7 @@ func TestSchemaFromJson(t *testing.T) {
 				ok(err)
 
 				s, err := NewSchema(
+					"valid",
 					env,
 					version,
 					internalService,
@@ -158,7 +159,7 @@ func TestSchemaFromJson(t *testing.T) {
 					}
 				`,
 			},
-			expected: func() Schema {
+			expected: func() *Schema {
 				return nil
 			},
 			err: true,
@@ -168,7 +169,7 @@ func TestSchemaFromJson(t *testing.T) {
 			args: args{
 				json: `{}`,
 			},
-			expected: func() Schema {
+			expected: func() *Schema {
 				return nil
 			},
 			err: true,
@@ -177,7 +178,7 @@ func TestSchemaFromJson(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			schema, err := FromJson(test.args.json)
+			schema, err := FromJson(test.name, test.args.json)
 
 			assert.Equal(t, test.expected(), schema)
 			if test.err {
@@ -197,7 +198,7 @@ func TestSchemaFromMAp(t *testing.T) {
 	tests := []struct {
 		name     string
 		args     args
-		expected func() Schema
+		expected func() *Schema
 		err      bool
 	}{
 		{
@@ -215,12 +216,13 @@ func TestSchemaFromMAp(t *testing.T) {
 					},
 				},
 			},
-			expected: func() Schema {
+			expected: func() *Schema {
 				// Env
 				env, err := props.NewInteger("env", props.WithInterval(1, 256))
 				ok(err)
 
 				s, err := NewSchema(
+					"valid",
 					env,
 				)
 				ok(err)
@@ -232,7 +234,7 @@ func TestSchemaFromMAp(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			schema, err := FromMap(test.args.m)
+			schema, err := FromMap(test.name, test.args.m)
 
 			assert.Equal(t, test.expected(), schema)
 			if test.err {
