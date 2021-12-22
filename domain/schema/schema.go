@@ -3,10 +3,12 @@ package schema
 import (
 	"errors"
 
+	"github.com/aboglioli/configd/common/model"
 	"github.com/aboglioli/configd/domain/props"
 )
 
 type Schema struct {
+	id    *model.Id
 	name  *Name
 	props map[string]props.Prop
 }
@@ -21,10 +23,20 @@ func NewSchema(name *Name, ps ...props.Prop) (*Schema, error) {
 		psMap[p.Name()] = p
 	}
 
+	id, err := model.GenerateId()
+	if err != nil {
+		return nil, err
+	}
+
 	return &Schema{
+		id:    id,
 		name:  name,
 		props: psMap,
 	}, nil
+}
+
+func (s *Schema) Id() *model.Id {
+	return s.id
 }
 
 func (s *Schema) Name() *Name {
@@ -33,4 +45,8 @@ func (s *Schema) Name() *Name {
 
 func (s *Schema) Props() map[string]props.Prop {
 	return s.props
+}
+
+func (s *Schema) Validate(c map[string]interface{}) error {
+	return nil
 }

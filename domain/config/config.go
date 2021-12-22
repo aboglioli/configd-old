@@ -2,18 +2,16 @@ package config
 
 import (
 	"errors"
-
-	"github.com/aboglioli/configd/domain/schema"
 )
 
 type Config struct {
-	schemaName *schema.Name
+	schemaName *Name
 	name       *Name
 	config     map[string]interface{}
 }
 
 func NewConfig(
-	schemaName *schema.Name,
+	schemaName *Name,
 	name *Name,
 	config map[string]interface{},
 ) (*Config, error) {
@@ -23,12 +21,12 @@ func NewConfig(
 
 	return &Config{
 		schemaName: schemaName,
-		name: name,
-		config: config,
+		name:       name,
+		config:     config,
 	}, nil
 }
 
-func (c *Config) SchemaName() *schema.Name {
+func (c *Config) SchemaName() *Name {
 	return c.schemaName
 }
 

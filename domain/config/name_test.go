@@ -1,4 +1,4 @@
-package schema
+package config
 
 import (
 	"testing"
@@ -22,7 +22,7 @@ func TestName(t *testing.T) {
 		{
 			name: "short name",
 			args: args{
-				name: "",
+				name: "a",
 			},
 			err: true,
 		},

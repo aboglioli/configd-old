@@ -11,11 +11,13 @@ type Name struct {
 }
 
 func NewName(n string) (*Name, error) {
-	if len(n) < 4 {
-		return nil, errors.New("schema name too short")
+	n = slug.Make(n)
+
+	if len(n) == 0 {
+		return nil, errors.New("empty schema name")
 	}
 
 	return &Name{
-		name: slug.Make(n),
+		name: n,
 	}, nil
 }
