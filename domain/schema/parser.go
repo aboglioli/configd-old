@@ -48,7 +48,12 @@ func FromMap(name string, data map[string]interface{}) (*Schema, error) {
 		return nil, err
 	}
 
-	s, err := NewSchema(name, props...)
+	n, err := NewName(name)
+	if err != nil {
+		return nil, err
+	}
+
+	s, err := NewSchema(n, props...)
 	if err != nil {
 		return nil, err
 	}

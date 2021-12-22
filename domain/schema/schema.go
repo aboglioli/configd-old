@@ -7,11 +7,11 @@ import (
 )
 
 type Schema struct {
-	name  string
+	name  *Name
 	props map[string]props.Prop
 }
 
-func NewSchema(name string, ps ...props.Prop) (*Schema, error) {
+func NewSchema(name *Name, ps ...props.Prop) (*Schema, error) {
 	if len(ps) == 0 {
 		return nil, errors.New("schema does not have props")
 	}
@@ -27,7 +27,7 @@ func NewSchema(name string, ps ...props.Prop) (*Schema, error) {
 	}, nil
 }
 
-func (s *Schema) Name() string {
+func (s *Schema) Name() *Name {
 	return s.name
 }
 

@@ -4,26 +4,23 @@ import (
 	"testing"
 
 	"github.com/aboglioli/configd/domain/props"
+	"github.com/aboglioli/configd/utils"
 	"github.com/stretchr/testify/assert"
 )
-
-func ok(err error) {
-	if err != nil {
-		panic(err)
-	}
-}
 
 func TestSchemaFromJson(t *testing.T) {
 	type args struct {
 		json string
 	}
 
-	tests := []struct {
+	type test struct {
 		name     string
 		args     args
-		expected func() *Schema
+		expected func(t *test) *Schema
 		err      bool
-	}{
+	}
+
+	tests := []test{
 		{
 			name: "valid",
 			args: args{
@@ -84,54 +81,57 @@ func TestSchemaFromJson(t *testing.T) {
 					}
 				`,
 			},
-			expected: func() *Schema {
+			expected: func(t *test) *Schema {
 				// Env
 				env, err := props.NewString("env", props.WithEnum("dev", "staging", "prod"))
-				ok(err)
+				utils.Ok(err)
 
 				// Version
 				version, err := props.NewString("version", props.WithRegex("v[0-9]+"))
-				ok(err)
+				utils.Ok(err)
 
 				// Internal service
 				url, err := props.NewString("url", props.WithRequired(true))
-				ok(err)
+				utils.Ok(err)
 
 				port, err := props.NewInteger("port", props.WithDefault(8080), props.WithInterval(80, 18080))
-				ok(err)
+				utils.Ok(err)
 
 				internalService, err := props.NewObject(
 					"internal_service",
 					props.WithProps(url, port),
 				)
-				ok(err)
+				utils.Ok(err)
 
 				// Circuit breaker
 				threshold, err := props.NewFloat("threshold", props.WithDefault(0.6))
-				ok(err)
+				utils.Ok(err)
 
 				circuitBreaker, err := props.NewObject("circuit_breaker", props.WithProps(threshold))
-				ok(err)
+				utils.Ok(err)
 
 				// Nested objects
 				value, err := props.NewFloat("value", props.WithDefault(12.75))
-				ok(err)
+				utils.Ok(err)
 
 				innerObject, err := props.NewObject("inner_object", props.WithProps(value))
-				ok(err)
+				utils.Ok(err)
 
 				nestedObject, err := props.NewObject("nested_object", props.WithProps(innerObject))
-				ok(err)
+				utils.Ok(err)
+
+				n, err := NewName(t.name)
+				utils.Ok(err)
 
 				s, err := NewSchema(
-					"valid",
+					n,
 					env,
 					version,
 					internalService,
 					circuitBreaker,
 					nestedObject,
 				)
-				ok(err)
+				utils.Ok(err)
 
 				return s
 			},
@@ -159,7 +159,7 @@ func TestSchemaFromJson(t *testing.T) {
 					}
 				`,
 			},
-			expected: func() *Schema {
+			expected: func(t *test) *Schema {
 				return nil
 			},
 			err: true,
@@ -169,7 +169,7 @@ func TestSchemaFromJson(t *testing.T) {
 			args: args{
 				json: `{}`,
 			},
-			expected: func() *Schema {
+			expected: func(t *test) *Schema {
 				return nil
 			},
 			err: true,
@@ -180,7 +180,7 @@ func TestSchemaFromJson(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			schema, err := FromJson(test.name, test.args.json)
 
-			assert.Equal(t, test.expected(), schema)
+			assert.Equal(t, test.expected(&test), schema)
 			if test.err {
 				assert.NotNil(t, err)
 			} else {
@@ -190,17 +190,19 @@ func TestSchemaFromJson(t *testing.T) {
 	}
 }
 
-func TestSchemaFromMAp(t *testing.T) {
+func TestSchemaFromMap(t *testing.T) {
 	type args struct {
 		m map[string]interface{}
 	}
 
-	tests := []struct {
+	type test struct {
 		name     string
 		args     args
-		expected func() *Schema
+		expected func(t *test) *Schema
 		err      bool
-	}{
+	}
+
+	tests := []test{
 		{
 			name: "valid",
 			args: args{
@@ -216,16 +218,19 @@ func TestSchemaFromMAp(t *testing.T) {
 					},
 				},
 			},
-			expected: func() *Schema {
+			expected: func(t *test) *Schema {
 				// Env
 				env, err := props.NewInteger("env", props.WithInterval(1, 256))
-				ok(err)
+				utils.Ok(err)
+
+				n, err := NewName(t.name)
+				utils.Ok(err)
 
 				s, err := NewSchema(
-					"valid",
+					n,
 					env,
 				)
-				ok(err)
+				utils.Ok(err)
 
 				return s
 			},
@@ -236,7 +241,7 @@ func TestSchemaFromMAp(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			schema, err := FromMap(test.name, test.args.m)
 
-			assert.Equal(t, test.expected(), schema)
+			assert.Equal(t, test.expected(&test), schema)
 			if test.err {
 				assert.NotNil(t, err)
 			} else {
