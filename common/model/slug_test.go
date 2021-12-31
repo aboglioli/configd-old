@@ -1,4 +1,4 @@
-package schema
+package model
 
 import (
 	"testing"
@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestName(t *testing.T) {
+func TestSlug(t *testing.T) {
 	type args struct {
 		name string
 	}
@@ -14,7 +14,7 @@ func TestName(t *testing.T) {
 	type test struct {
 		name     string
 		args     args
-		expected *Name
+		expected *Slug
 		err      bool
 	}
 
@@ -31,15 +31,15 @@ func TestName(t *testing.T) {
 			args: args{
 				name: "My Distributed Service 01 !",
 			},
-			expected: &Name{
-				name: "my-distributed-service-01",
+			expected: &Slug{
+				slug: "my-distributed-service-01",
 			},
 		},
 	}
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			n, err := NewName(test.args.name)
+			n, err := NewSlug(test.args.name)
 
 			assert.Equal(t, test.expected, n)
 			if test.err {

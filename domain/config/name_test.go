@@ -32,7 +32,7 @@ func TestName(t *testing.T) {
 				name: "My Distributed Service 01 !",
 			},
 			expected: &Name{
-				name: "my-distributed-service-01",
+				name: "My Distributed Service 01 !",
 			},
 		},
 	}

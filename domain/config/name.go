@@ -2,8 +2,6 @@ package config
 
 import (
 	"errors"
-
-	"github.com/gosimple/slug"
 )
 
 type Name struct {
@@ -11,8 +9,6 @@ type Name struct {
 }
 
 func NewName(n string) (*Name, error) {
-	n = slug.Make(n)
-
 	if len(n) < 4 {
 		return nil, errors.New("config name too short")
 	}
@@ -20,4 +16,12 @@ func NewName(n string) (*Name, error) {
 	return &Name{
 		name: n,
 	}, nil
+}
+
+func (n *Name) Value() string {
+	return n.name
+}
+
+func (n *Name) Equals(o *Name) bool {
+	return n.name == o.name
 }

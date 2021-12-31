@@ -8,12 +8,12 @@ import (
 )
 
 type Schema struct {
-	id    *model.Id
+	slug  *model.Slug
 	name  *Name
 	props map[string]props.Prop
 }
 
-func NewSchema(name *Name, ps ...props.Prop) (*Schema, error) {
+func BuildSchema(slug *model.Slug, name *Name, ps ...props.Prop) (*Schema, error) {
 	if len(ps) == 0 {
 		return nil, errors.New("schema does not have props")
 	}
@@ -23,20 +23,24 @@ func NewSchema(name *Name, ps ...props.Prop) (*Schema, error) {
 		psMap[p.Name()] = p
 	}
 
-	id, err := model.GenerateId()
-	if err != nil {
-		return nil, err
-	}
-
 	return &Schema{
-		id:    id,
+		slug:  slug,
 		name:  name,
 		props: psMap,
 	}, nil
 }
 
-func (s *Schema) Id() *model.Id {
-	return s.id
+func NewSchema(name *Name, ps ...props.Prop) (*Schema, error) {
+	slug, err := model.NewSlug(name.Value())
+	if err != nil {
+		return nil, err
+	}
+
+	return BuildSchema(slug, name, ps...)
+}
+
+func (s *Schema) Slug() *model.Slug {
+	return s.slug
 }
 
 func (s *Schema) Name() *Name {
