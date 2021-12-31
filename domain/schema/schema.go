@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"github.com/aboglioli/configd/common/model"
+	"github.com/aboglioli/configd/domain/config"
 	"github.com/aboglioli/configd/domain/props"
 )
 
@@ -51,6 +52,6 @@ func (s *Schema) Props() map[string]props.Prop {
 	return s.props
 }
 
-func (s *Schema) Validate(c map[string]interface{}) error {
+func (s *Schema) Validate(c config.ConfigData) error {
 	return nil
 }
