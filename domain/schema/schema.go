@@ -2,6 +2,7 @@ package schema
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/aboglioli/configd/common/model"
 	"github.com/aboglioli/configd/domain/config"
@@ -53,5 +54,19 @@ func (s *Schema) Props() map[string]props.Prop {
 }
 
 func (s *Schema) Validate(c config.ConfigData) error {
+	for k, v := range c {
+		prop, ok := s.props[k]
+		if !ok {
+			return fmt.Errorf("prop %s not found in schema", k)
+		}
+
+		switch v.(type) {
+		case string:
+			if prop.Type() != props.STRING {
+				return fmt.Errorf("%v is not an string", v)
+			}
+		}
+	}
+
 	return nil
 }

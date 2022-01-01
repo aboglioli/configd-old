@@ -136,5 +136,5 @@ func parseSchemaProp(propName string, schema *schema) (props.Prop, error) {
 		return props.NewBool(propName, opts...)
 	}
 
-	return nil, errors.New(fmt.Sprintf("invalid type %s", schema.Type))
+	return nil, fmt.Errorf("invalid type %s", schema.Type)
 }

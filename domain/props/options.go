@@ -10,7 +10,7 @@ type Option func(p *prop) error
 func WithDefault(d interface{}) Option {
 	return func(p *prop) error {
 		if p.t == OBJECT {
-			return errors.New(fmt.Sprintf("%s cannot have default", p.t))
+			return fmt.Errorf("%s cannot have default", p.t)
 		}
 
 		switch p.t {
@@ -44,7 +44,7 @@ func WithDefault(d interface{}) Option {
 func WithRequired(r bool) Option {
 	return func(p *prop) error {
 		if p.t == OBJECT && !r {
-			return errors.New(fmt.Sprintf("%s must be required", p.t))
+			return fmt.Errorf("%s must be required", p.t)
 		}
 
 		p.required = r
@@ -55,7 +55,7 @@ func WithRequired(r bool) Option {
 func WithEnum(enum ...interface{}) Option {
 	return func(p *prop) error {
 		if p.t == OBJECT {
-			return errors.New(fmt.Sprintf("%s cannot have enum values", p.t))
+			return fmt.Errorf("%s cannot have enum values", p.t)
 		}
 
 		for _, value := range enum {
@@ -87,7 +87,7 @@ func WithEnum(enum ...interface{}) Option {
 func WithRegex(regex string) Option {
 	return func(p *prop) error {
 		if p.t != STRING {
-			return errors.New(fmt.Sprintf("%s cannot have regex", p.t))
+			return fmt.Errorf("%s cannot have regex", p.t)
 		}
 
 		p.regex = regex
@@ -98,7 +98,7 @@ func WithRegex(regex string) Option {
 func WithInterval(min, max float64) Option {
 	return func(p *prop) error {
 		if p.t != INT && p.t != FLOAT {
-			return errors.New(fmt.Sprintf("%s cannot have interval, it must be used with numeric types", p.t))
+			return fmt.Errorf("%s cannot have interval, it must be used with numeric types", p.t)
 		}
 
 		interval, err := NewInterval(min, max)
@@ -114,7 +114,7 @@ func WithInterval(min, max float64) Option {
 func WithProps(props ...Prop) Option {
 	return func(p *prop) error {
 		if p.t != OBJECT {
-			return errors.New(fmt.Sprintf("%s cannot have subproperties", p.t))
+			return fmt.Errorf("%s cannot have subproperties", p.t)
 		}
 
 		if p.props == nil {
