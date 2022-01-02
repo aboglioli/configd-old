@@ -3,6 +3,7 @@ package schema
 import (
 	"errors"
 	"fmt"
+	"reflect"
 
 	"github.com/aboglioli/configd/common/model"
 	"github.com/aboglioli/configd/domain/config"
@@ -60,10 +61,40 @@ func (s *Schema) Validate(c config.ConfigData) error {
 			return fmt.Errorf("prop %s not found in schema", k)
 		}
 
+		fmt.Printf("%#v %s\n", v, reflect.TypeOf(v))
+
 		switch v.(type) {
 		case string:
 			if prop.Type() != props.STRING {
-				return fmt.Errorf("%v is not an string", v)
+				return fmt.Errorf("%v is not a string", v)
+			}
+		case int:
+			if prop.Type() != props.INT {
+				return fmt.Errorf("%v is not an integer", v)
+			}
+		case int32:
+			if prop.Type() != props.INT {
+				return fmt.Errorf("%v is not an integer", v)
+			}
+		case int64:
+			if prop.Type() != props.INT {
+				return fmt.Errorf("%v is not an integer", v)
+			}
+		case float32:
+			if prop.Type() != props.FLOAT {
+				return fmt.Errorf("%v is not a float", v)
+			}
+		case float64:
+			if prop.Type() != props.FLOAT {
+				return fmt.Errorf("%v is not a float", v)
+			}
+		case bool:
+			if prop.Type() != props.BOOL {
+				return fmt.Errorf("%v is not a boolean", v)
+			}
+		case interface{}:
+			if prop.Type() != props.OBJECT {
+				return fmt.Errorf("%v is not an object", v)
 			}
 		}
 	}

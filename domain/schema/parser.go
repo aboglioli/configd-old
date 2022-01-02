@@ -2,7 +2,6 @@ package schema
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"strings"
 
