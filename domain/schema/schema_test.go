@@ -13,7 +13,7 @@ func TestValidateSchema(t *testing.T) {
 	type test struct {
 		name string
 
-		props  func() []props.Prop
+		schema func(t *test) *Schema
 		config config.ConfigData
 
 		err bool
@@ -22,14 +22,42 @@ func TestValidateSchema(t *testing.T) {
 	tests := []test{
 		{
 			name: "invalid simple schema",
-			props: func() []props.Prop {
-				s, err := props.NewString("str")
+			schema: func(t *test) *Schema {
+				str, err := props.NewString("str")
 				utils.Ok(err)
 
-				return []props.Prop{s}
+				n, err := NewName(t.name)
+				utils.Ok(err)
+
+				s, err := NewSchema(n, str)
+
+				return s
 			},
 			config: config.ConfigData{
 				"str": 12,
+			},
+			err: true,
+		},
+		{
+			name: "invalid object",
+			schema: func(t *test) *Schema {
+				str, err := props.NewString("str")
+				utils.Ok(err)
+
+				obj, err := props.NewObject("obj", props.WithProps(str))
+				utils.Ok(err)
+
+				n, err := NewName(t.name)
+				utils.Ok(err)
+
+				s, err := NewSchema(n, obj)
+
+				return s
+			},
+			config: config.ConfigData{
+				"obj": map[string]interface{}{
+					"str": 12,
+				},
 			},
 			err: true,
 		},
@@ -37,13 +65,9 @@ func TestValidateSchema(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			name, err := NewName(test.name)
-			assert.NoError(t, err)
+			schema := test.schema(&test)
 
-			schema, err := NewSchema(name, test.props()...)
-			assert.NoError(t, err)
-
-			err = schema.Validate(test.config)
+			err := schema.Validate(test.config)
 			if test.err {
 				assert.Error(t, err)
 			} else {

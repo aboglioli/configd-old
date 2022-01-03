@@ -61,6 +61,12 @@ func (s *Schema) Validate(c config.ConfigData) error {
 			return fmt.Errorf("prop %s not found in schema", k)
 		}
 
+		if obj, ok := v.(map[string]interface{}); ok {
+			if err := s.Validate(obj); err != nil {
+				return fmt.Errorf("object %s: %s", k, err.Error())
+			}
+		}
+
 		switch v.(type) {
 		case string:
 			if prop.Type() != props.STRING {
@@ -90,10 +96,12 @@ func (s *Schema) Validate(c config.ConfigData) error {
 			if prop.Type() != props.BOOL {
 				return fmt.Errorf("%v is not a boolean", v)
 			}
-		case interface{}:
+		case map[string]interface{}:
 			if prop.Type() != props.OBJECT {
 				return fmt.Errorf("%v is not an object", v)
 			}
+		default:
+			return fmt.Errorf("%v unknown type", v)
 		}
 	}
 
