@@ -1,6 +1,7 @@
 package props
 
 import (
+	"encoding/json"
 	"errors"
 )
 
@@ -13,6 +14,7 @@ type Prop interface {
 	Regex() string
 	Interval() *interval
 	Props() map[string]Prop
+	IsArray() bool
 }
 
 var _ Prop = (*prop)(nil)
@@ -26,6 +28,7 @@ type prop struct {
 	regex    string
 	interval *interval
 	props    map[string]Prop
+	array    bool
 }
 
 func newValue(name string, t PropType, opts ...Option) (*prop, error) {
@@ -104,4 +107,30 @@ func (p *prop) Interval() *interval {
 
 func (p *prop) Props() map[string]Prop {
 	return p.props
+}
+
+func (p *prop) IsArray() bool {
+	return p.array
+}
+
+func (p *prop) MarshalJSON() ([]byte, error) {
+	d := map[string]interface{}{
+		"name":     p.name,
+		"type":     p.t,
+		"default":  p.def,
+		"required": p.required,
+		"enum":     p.enum,
+		"regex":    p.regex,
+		"props":    p.props,
+		"array":    p.array,
+	}
+
+	if p.interval != nil {
+		d["interval"] = map[string]interface{}{
+			"min": p.interval.min,
+			"max": p.interval.max,
+		}
+	}
+
+	return json.Marshal(&d)
 }

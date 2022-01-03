@@ -13,18 +13,18 @@ const (
 	SCHEMA_KEY = "$schema"
 )
 
-type SchemaInterval struct {
+type propSchemaInterval struct {
 	Min float64 `mapstructure:"min"`
 	Max float64 `mapstructure:"max"`
 }
 
-type schema struct {
-	Type     string          `mapstructure:"type"`
-	Default  interface{}     `mapstructure:"default"`
-	Required bool            `mapstructure:"required"`
-	Enum     []interface{}   `mapstructure:"enum"`
-	Regex    string          `mapstructure:"regex"`
-	Interval *SchemaInterval `mapstructure:"interval"`
+type propSchema struct {
+	Type     string              `mapstructure:"type"`
+	Default  interface{}         `mapstructure:"default"`
+	Required bool                `mapstructure:"required"`
+	Enum     []interface{}       `mapstructure:"enum"`
+	Regex    string              `mapstructure:"regex"`
+	Interval *propSchemaInterval `mapstructure:"interval"`
 }
 
 func FromJson(name string, data string) (*Schema, error) {
@@ -64,16 +64,33 @@ func parseProps(m map[string]interface{}) ([]props.Prop, error) {
 	ps := make([]props.Prop, 0)
 
 	for k, v := range m {
+		opts := make([]props.Option, 0)
+
+		// It's an array
+		if arr, ok := v.([]interface{}); ok {
+			if len(arr) != 1 {
+				return nil, fmt.Errorf("%s is an invalid array", k)
+			}
+
+			m, ok := arr[0].(map[string]interface{})
+			if !ok {
+				return nil, fmt.Errorf("%s array has invalid object", k)
+			}
+
+			v = m
+			opts = append(opts, props.WithArray())
+		}
+
 		// It's an schema
 		if v, ok := v.(map[string]interface{}); ok {
 			// Schema
 			if v, ok := v[SCHEMA_KEY]; ok {
-				var s schema
+				var s propSchema
 				if err := mapstructure.Decode(v, &s); err != nil {
 					return nil, err
 				}
 
-				prop, err := parseSchemaProp(k, &s)
+				prop, err := parseSchemaProp(k, &s, opts...)
 				if err != nil {
 					return nil, err
 				}
@@ -88,9 +105,11 @@ func parseProps(m map[string]interface{}) ([]props.Prop, error) {
 				return nil, err
 			}
 
+			opts = append(opts, props.WithProps(subProps...))
+
 			prop, err := props.NewObject(
 				k,
-				props.WithProps(subProps...),
+				opts...,
 			)
 			if err != nil {
 				return nil, err
@@ -103,9 +122,8 @@ func parseProps(m map[string]interface{}) ([]props.Prop, error) {
 	return ps, nil
 }
 
-func parseSchemaProp(propName string, schema *schema) (props.Prop, error) {
+func parseSchemaProp(propName string, schema *propSchema, opts ...props.Option) (props.Prop, error) {
 	// Parse options
-	opts := make([]props.Option, 0)
 	opts = append(opts, props.WithRequired(schema.Required))
 
 	if schema.Default != nil {

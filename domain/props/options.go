@@ -58,17 +58,28 @@ func WithEnum(enum ...interface{}) Option {
 			return fmt.Errorf("%s cannot have enum values", p.t)
 		}
 
-		for _, value := range enum {
+		parsedEnum := make([]interface{}, len(enum))
+		for i, value := range enum {
 			switch p.t {
 			case STRING:
 				if _, ok := value.(string); !ok {
 					return errors.New("string enum expected")
 				}
 			case INT:
+				// Convert between number types
+				if v, ok := value.(float64); ok {
+					value = int(v)
+				}
+
 				if _, ok := value.(int); !ok {
 					return errors.New("integer enum expected")
 				}
 			case FLOAT:
+				// Convert between number types
+				if v, ok := value.(int); ok {
+					value = float64(v)
+				}
+
 				if _, ok := value.(float64); !ok {
 					return errors.New("float enum expected")
 				}
@@ -77,9 +88,11 @@ func WithEnum(enum ...interface{}) Option {
 					return errors.New("bool enum expected")
 				}
 			}
+
+			parsedEnum[i] = value
 		}
 
-		p.enum = enum
+		p.enum = parsedEnum
 		return nil
 	}
 }
@@ -125,6 +138,13 @@ func WithProps(props ...Prop) Option {
 			p.props[prop.Name()] = prop
 		}
 
+		return nil
+	}
+}
+
+func WithArray(props ...Prop) Option {
+	return func(p *prop) error {
+		p.array = true
 		return nil
 	}
 }

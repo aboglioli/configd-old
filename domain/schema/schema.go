@@ -1,9 +1,9 @@
 package schema
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
-	"reflect"
 
 	"github.com/aboglioli/configd/common/model"
 	"github.com/aboglioli/configd/domain/config"
@@ -61,8 +61,6 @@ func (s *Schema) Validate(c config.ConfigData) error {
 			return fmt.Errorf("prop %s not found in schema", k)
 		}
 
-		fmt.Printf("%#v %s\n", v, reflect.TypeOf(v))
-
 		switch v.(type) {
 		case string:
 			if prop.Type() != props.STRING {
@@ -100,4 +98,14 @@ func (s *Schema) Validate(c config.ConfigData) error {
 	}
 
 	return nil
+}
+
+func (s *Schema) MarshalJSON() ([]byte, error) {
+	d := map[string]interface{}{
+		"slug":  s.slug.Value(),
+		"name":  s.name.Value(),
+		"props": s.props,
+	}
+
+	return json.Marshal(&d)
 }
