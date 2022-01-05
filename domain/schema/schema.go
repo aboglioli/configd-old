@@ -55,13 +55,15 @@ func (s *Schema) Props() map[string]props.Prop {
 }
 
 func (s *Schema) Validate(c config.ConfigData) error {
-	for k, v := range c {
-		if err := validateConfig(k, v, s.props); err != nil {
-			return err
-		}
-	}
+	// for k, v := range c {
+	// 	if err := walkConfig(k, v, s.props); err != nil {
+	// 		return err
+	// 	}
+	// }
 
-	return nil
+	// return nil
+
+	return walkProps(s.props, c, true)
 }
 
 func (s *Schema) MarshalJSON() ([]byte, error) {
@@ -74,7 +76,7 @@ func (s *Schema) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&d)
 }
 
-func validateConfig(key string, value interface{}, propsMap map[string]props.Prop) error {
+func walkConfig(key string, value interface{}, propsMap map[string]props.Prop) error {
 	prop, ok := propsMap[key]
 	if !ok {
 		return fmt.Errorf("prop %s not found in schema", key)
@@ -197,7 +199,7 @@ func validateConfig(key string, value interface{}, propsMap map[string]props.Pro
 		}
 
 		for k, v := range value {
-			if err := validateConfig(k, v, prop.Props()); err != nil {
+			if err := walkConfig(k, v, prop.Props()); err != nil {
 				return fmt.Errorf("object %s: %s", key, err.Error())
 			}
 		}
@@ -207,12 +209,133 @@ func validateConfig(key string, value interface{}, propsMap map[string]props.Pro
 		}
 
 		for i, v := range value {
-			if err := validateConfig(key, v, propsMap); err != nil {
+			if err := walkConfig(key, v, propsMap); err != nil {
 				return fmt.Errorf("array item %d: %s", i, err.Error())
 			}
 		}
 	default:
 		return fmt.Errorf("%v unknown type in %s", value, key)
+	}
+
+	return nil
+}
+
+func walkProps(propsMap map[string]props.Prop, config map[string]interface{}, validateArray bool) error {
+	for k, prop := range propsMap {
+		entry, ok := config[k]
+		if !ok {
+			return fmt.Errorf("prop %s not found in config", k)
+		}
+
+		// Required and assign default value
+		if prop.Required() && entry == nil {
+			if prop.Default() != nil {
+				config[k] = prop.Default()
+			} else {
+				return fmt.Errorf("value for %s is required", k)
+			}
+		}
+
+		// Check for enum values
+		if len(prop.Enum()) > 0 {
+			isInEnum := false
+			for _, e := range prop.Enum() {
+				if entry == e {
+					isInEnum = true
+					break
+				}
+			}
+
+			if !isInEnum {
+				return fmt.Errorf("%v from %s is not in enum values %v", entry, k, prop.Enum())
+			}
+		}
+
+		if prop.IsArray() && validateArray {
+			arr, ok := entry.([]interface{})
+			if !ok {
+				return fmt.Errorf("%s is not an array", k)
+			}
+
+			for i, v := range arr {
+				if err := walkProps(propsMap, map[string]interface{}{k: v}, false); err != nil {
+					return fmt.Errorf("array item %d: %s", i, err.Error())
+				}
+			}
+
+			return nil
+		}
+
+		switch prop.Type() {
+		case props.STRING:
+			_, ok := entry.(string)
+			if !ok {
+				return fmt.Errorf("%v is not a string", entry)
+			}
+		case props.INT:
+			v, okInt := entry.(int)
+			v32, okInt32 := entry.(int32)
+			v64, okInt64 := entry.(int64)
+
+			if !okInt {
+				if okInt32 {
+					v = int(v32)
+				} else if okInt64 {
+					v = int(v64)
+				} else {
+					return fmt.Errorf("%s = %v is not an integer", k, entry)
+				}
+			}
+
+			if prop.Interval() != nil {
+				interval := prop.Interval()
+
+				if v < int(interval.Min()) {
+					return fmt.Errorf("%s = %v is lesser than the minimum value in interval", k, entry)
+				}
+
+				if v > int(interval.Max()) {
+					return fmt.Errorf("%s = %v is greater than the maximum value in interval", k, entry)
+				}
+			}
+		case props.FLOAT:
+			v32, okFloat32 := entry.(float32)
+			v, okFloat64 := entry.(float64)
+
+			if !okFloat64 {
+				if okFloat32 {
+					v = float64(v32)
+				} else {
+					return fmt.Errorf("%s = %v is not a float", k, entry)
+				}
+			}
+
+			if prop.Interval() != nil {
+				interval := prop.Interval()
+
+				if v < float64(interval.Min()) {
+					return fmt.Errorf("%s = %v is lesser than the minimum value in interval", k, entry)
+				}
+
+				if v > float64(interval.Max()) {
+					return fmt.Errorf("%s = %v is greater than the maximum value in interval", k, entry)
+				}
+			}
+		case props.BOOL:
+			_, ok := entry.(bool)
+			if !ok {
+				return fmt.Errorf("%s = %v is not a boolean", k, entry)
+			}
+		case props.OBJECT:
+			obj, ok := entry.(map[string]interface{})
+			if !ok {
+				return fmt.Errorf("%s = %v is not an object", k, entry)
+			}
+
+			if err := walkProps(prop.Props(), obj, true); err != nil {
+				return fmt.Errorf("object %s: %s", k, err.Error())
+			}
+		}
 	}
 
 	return nil
