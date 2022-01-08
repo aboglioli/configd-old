@@ -168,11 +168,7 @@ func TestValidateSchema(t *testing.T) {
 		{
 			name: "valid array",
 			schema: func(t *test) *Schema {
-				integer, err := props.NewInteger(
-					"integers",
-					props.WithArray(),
-					props.WithInterval(2, 6),
-				)
+				integer, err := props.NewInteger("integers", props.WithArray(), props.WithInterval(2, 6))
 				utils.Ok(err)
 
 				obj, err := props.NewObject("obj", props.WithProps(integer))
@@ -188,6 +184,58 @@ func TestValidateSchema(t *testing.T) {
 			config: config.ConfigData{
 				"obj": map[string]interface{}{
 					"integers": []interface{}{2, 3, 4, 5, 6},
+				},
+			},
+			err: false,
+		},
+		{
+			name: "valid complex array",
+			schema: func(t *test) *Schema {
+				integers, err := props.NewInteger("integers", props.WithArray(), props.WithInterval(2, 6))
+				utils.Ok(err)
+
+				strings, err := props.NewString("strings", props.WithArray(), props.WithEnum("one", "two", "three"))
+				utils.Ok(err)
+
+				floats, err := props.NewFloat("floats", props.WithArray(), props.WithInterval(2.5, 15.65))
+				utils.Ok(err)
+
+				booleans, err := props.NewBool("booleans", props.WithArray(), props.WithRequired(true))
+				utils.Ok(err)
+
+				object, err := props.NewObject("object", props.WithProps(floats, booleans))
+				utils.Ok(err)
+
+				array, err := props.NewObject("array", props.WithArray(), props.WithProps(integers, strings, object))
+				utils.Ok(err)
+
+				n, err := NewName(t.name)
+				utils.Ok(err)
+
+				s, err := NewSchema(n, integers, strings, array)
+
+				return s
+			},
+			config: config.ConfigData{
+				"integers": []interface{}{2, 4, 6},
+				"strings":  []interface{}{"one", "three"},
+				"array": []interface{}{
+					map[string]interface{}{
+						"integers": []interface{}{3},
+						"strings":  []interface{}{"two"},
+						"object": map[string]interface{}{
+							"floats":   []interface{}{3.6, 4.8},
+							"booleans": []interface{}{true, true, false},
+						},
+					},
+					map[string]interface{}{
+						"integers": []interface{}{3, 2, 6},
+						"strings":  []interface{}{"three"},
+						"object": map[string]interface{}{
+							"floats":   []interface{}{4.8},
+							"booleans": []interface{}{false},
+						},
+					},
 				},
 			},
 			err: false,

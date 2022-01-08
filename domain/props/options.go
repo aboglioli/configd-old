@@ -127,7 +127,7 @@ func WithInterval(min, max float64) Option {
 func WithProps(props ...Prop) Option {
 	return func(p *prop) error {
 		if p.t != OBJECT {
-			return fmt.Errorf("%s cannot have subproperties", p.t)
+			return fmt.Errorf("%s cannot have subprops", p.t)
 		}
 
 		if p.props == nil {
