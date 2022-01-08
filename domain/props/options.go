@@ -5,10 +5,10 @@ import (
 	"fmt"
 )
 
-type Option func(p *prop) error
+type Option func(p *Prop) error
 
 func WithDefault(d interface{}) Option {
-	return func(p *prop) error {
+	return func(p *Prop) error {
 		if p.t == OBJECT {
 			return fmt.Errorf("%s cannot have default", p.t)
 		}
@@ -42,7 +42,7 @@ func WithDefault(d interface{}) Option {
 }
 
 func WithRequired(r bool) Option {
-	return func(p *prop) error {
+	return func(p *Prop) error {
 		if p.t == OBJECT && !r {
 			return fmt.Errorf("%s must be required", p.t)
 		}
@@ -53,7 +53,7 @@ func WithRequired(r bool) Option {
 }
 
 func WithEnum(enum ...interface{}) Option {
-	return func(p *prop) error {
+	return func(p *Prop) error {
 		if p.t == OBJECT {
 			return fmt.Errorf("%s cannot have enum values", p.t)
 		}
@@ -98,7 +98,7 @@ func WithEnum(enum ...interface{}) Option {
 }
 
 func WithRegex(regex string) Option {
-	return func(p *prop) error {
+	return func(p *Prop) error {
 		if p.t != STRING {
 			return fmt.Errorf("%s cannot have regex", p.t)
 		}
@@ -109,7 +109,7 @@ func WithRegex(regex string) Option {
 }
 
 func WithInterval(min, max float64) Option {
-	return func(p *prop) error {
+	return func(p *Prop) error {
 		if p.t != INT && p.t != FLOAT {
 			return fmt.Errorf("%s cannot have interval, it must be used with numeric types", p.t)
 		}
@@ -124,14 +124,14 @@ func WithInterval(min, max float64) Option {
 	}
 }
 
-func WithProps(props ...Prop) Option {
-	return func(p *prop) error {
+func WithProps(props ...*Prop) Option {
+	return func(p *Prop) error {
 		if p.t != OBJECT {
 			return fmt.Errorf("%s cannot have subprops", p.t)
 		}
 
 		if p.props == nil {
-			p.props = make(map[string]Prop)
+			p.props = make(map[string]*Prop)
 		}
 
 		for _, prop := range props {
@@ -142,8 +142,8 @@ func WithProps(props ...Prop) Option {
 	}
 }
 
-func WithArray(props ...Prop) Option {
-	return func(p *prop) error {
+func WithArray(props ...*Prop) Option {
+	return func(p *Prop) error {
 		p.array = true
 		return nil
 	}

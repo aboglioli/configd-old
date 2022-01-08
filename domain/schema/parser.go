@@ -60,8 +60,8 @@ func FromMap(name string, data map[string]interface{}) (*Schema, error) {
 	return s, nil
 }
 
-func parseProps(m map[string]interface{}) ([]props.Prop, error) {
-	ps := make([]props.Prop, 0)
+func parseProps(m map[string]interface{}) ([]*props.Prop, error) {
+	ps := make([]*props.Prop, 0)
 
 	for k, v := range m {
 		opts := make([]props.Option, 0)
@@ -122,7 +122,7 @@ func parseProps(m map[string]interface{}) ([]props.Prop, error) {
 	return ps, nil
 }
 
-func parseSchemaProp(propName string, schema *propSchema, opts ...props.Option) (props.Prop, error) {
+func parseSchemaProp(propName string, schema *propSchema, opts ...props.Option) (*props.Prop, error) {
 	// Parse options
 	opts = append(opts, props.WithRequired(schema.Required))
 

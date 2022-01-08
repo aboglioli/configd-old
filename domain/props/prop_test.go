@@ -10,100 +10,100 @@ import (
 func TestBuildProps(t *testing.T) {
 	tests := []struct {
 		name     string
-		makeProp func() (*prop, error)
-		expected *prop
+		makeProp func() (*Prop, error)
+		expected *Prop
 		err      bool
 	}{
 		{
 			name: "empty name",
-			makeProp: func() (*prop, error) {
+			makeProp: func() (*Prop, error) {
 				return NewString("")
 			},
 			err: true,
 		},
 		{
 			name: "simple string",
-			makeProp: func() (*prop, error) {
+			makeProp: func() (*Prop, error) {
 				return NewString("env")
 			},
-			expected: &prop{
+			expected: &Prop{
 				t:    STRING,
 				name: "env",
 			},
 		},
 		{
 			name: "different prop type and enum types",
-			makeProp: func() (*prop, error) {
+			makeProp: func() (*Prop, error) {
 				return NewString("env", WithEnum(1, 2, 3))
 			},
 			err: true,
 		},
 		{
 			name: "different prop type and enum types",
-			makeProp: func() (*prop, error) {
+			makeProp: func() (*Prop, error) {
 				return NewInteger("env", WithEnum("str"))
 			},
 			err: true,
 		},
 		{
 			name: "different prop type and enum types",
-			makeProp: func() (*prop, error) {
+			makeProp: func() (*Prop, error) {
 				return NewString("env", WithEnum("str", 256))
 			},
 			err: true,
 		},
 		{
 			name: "different prop type and default type",
-			makeProp: func() (*prop, error) {
+			makeProp: func() (*Prop, error) {
 				return NewString("env", WithDefault(12.55))
 			},
 			err: true,
 		},
 		{
 			name: "different prop type and default type",
-			makeProp: func() (*prop, error) {
+			makeProp: func() (*Prop, error) {
 				return NewInteger("env", WithDefault("str"))
 			},
 			err: true,
 		},
 		{
 			name: "object not required",
-			makeProp: func() (*prop, error) {
+			makeProp: func() (*Prop, error) {
 				return NewObject("env", WithRequired(false))
 			},
 			err: true,
 		},
 		{
 			name: "object with default",
-			makeProp: func() (*prop, error) {
+			makeProp: func() (*Prop, error) {
 				return NewObject("env", WithDefault("hello"))
 			},
 			err: true,
 		},
 		{
 			name: "object with enum",
-			makeProp: func() (*prop, error) {
+			makeProp: func() (*Prop, error) {
 				return NewObject("env", WithEnum(1, 2, 3))
 			},
 			err: true,
 		},
 		{
 			name: "non-string with regex",
-			makeProp: func() (*prop, error) {
+			makeProp: func() (*Prop, error) {
 				return NewInteger("env", WithRegex("[0-9]*"))
 			},
 			err: true,
 		},
 		{
 			name: "non-numeric with interval",
-			makeProp: func() (*prop, error) {
+			makeProp: func() (*Prop, error) {
 				return NewString("env", WithInterval(1, 10))
 			},
 			err: true,
 		},
 		{
 			name: "non-object with props",
-			makeProp: func() (*prop, error) {
+			makeProp: func() (*Prop, error) {
 				prop, err := NewString("str")
 				utils.Ok(err)
 
@@ -113,7 +113,7 @@ func TestBuildProps(t *testing.T) {
 		},
 		{
 			name: "object with props",
-			makeProp: func() (*prop, error) {
+			makeProp: func() (*Prop, error) {
 				str, err := NewString(
 					"str",
 					WithRequired(true),
@@ -131,19 +131,19 @@ func TestBuildProps(t *testing.T) {
 
 				return NewObject("obj", WithProps(str, num))
 			},
-			expected: &prop{
+			expected: &Prop{
 				t:        OBJECT,
 				name:     "obj",
 				required: true,
-				props: map[string]Prop{
-					"str": &prop{
+				props: map[string]*Prop{
+					"str": &Prop{
 						t:        STRING,
 						name:     "str",
 						required: true,
 						def:      "default",
 						enum:     []interface{}{"str1", "str2"},
 					},
-					"num": &prop{
+					"num": &Prop{
 						t:        INT,
 						name:     "num",
 						enum:     []interface{}{1, 5, 10},
@@ -159,6 +159,90 @@ func TestBuildProps(t *testing.T) {
 			prop, err := test.makeProp()
 
 			assert.Equal(t, test.expected, prop)
+			if test.err {
+				assert.NotNil(t, err)
+			} else {
+				assert.Nil(t, err)
+			}
+		})
+	}
+}
+
+func TestValidateValue(t *testing.T) {
+	type test struct {
+		name     string
+		makeProp func(t *test) *Prop
+		value    interface{}
+		err      bool
+	}
+	tests := []test{
+		{
+			name: "object with invalid sub props",
+			makeProp: func(t *test) *Prop {
+				string, err := NewString("string", WithRequired(true), WithEnum("hello", "bye"))
+				utils.Ok(err)
+
+				integer, err := NewInteger("integer", WithRequired(true), WithInterval(10, 15))
+				utils.Ok(err)
+
+				object, err := NewObject("object", WithProps(string, integer))
+				utils.Ok(err)
+
+				return object
+			},
+			value: map[string]interface{}{
+				"string":  "other",
+				"integer": 12,
+			},
+			err: true,
+		},
+		{
+			name: "object with invalid sub props",
+			makeProp: func(t *test) *Prop {
+				string, err := NewString("string", WithRequired(true), WithEnum("hello", "bye"))
+				utils.Ok(err)
+
+				integer, err := NewInteger("integer", WithRequired(true), WithInterval(10, 15))
+				utils.Ok(err)
+
+				object, err := NewObject("object", WithProps(string, integer))
+				utils.Ok(err)
+
+				return object
+			},
+			value: map[string]interface{}{
+				"string":  "hello",
+				"integer": 16,
+			},
+			err: true,
+		},
+		{
+			name: "object with sub props",
+			makeProp: func(t *test) *Prop {
+				string, err := NewString("string", WithRequired(true), WithEnum("hello", "bye"))
+				utils.Ok(err)
+
+				integer, err := NewInteger("integer", WithRequired(true), WithInterval(10, 15))
+				utils.Ok(err)
+
+				object, err := NewObject("object", WithProps(string, integer))
+				utils.Ok(err)
+
+				return object
+			},
+			value: map[string]interface{}{
+				"string":  "hello",
+				"integer": 12,
+			},
+			err: false,
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			prop := test.makeProp(&test)
+
+			err := prop.Validate(test.value)
 			if test.err {
 				assert.NotNil(t, err)
 			} else {
