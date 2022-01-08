@@ -217,7 +217,59 @@ func TestValidateValue(t *testing.T) {
 			err: true,
 		},
 		{
-			name: "object with sub props",
+			name: "array validation",
+			makeProp: func(t *test) *Prop {
+				string, err := NewString("string", WithRequired(true), WithEnum("hello", "bye"))
+				utils.Ok(err)
+
+				integer, err := NewInteger("integer", WithRequired(true), WithInterval(10, 15))
+				utils.Ok(err)
+
+				objects, err := NewObject("objects", WithArray(), WithProps(string, integer))
+				utils.Ok(err)
+
+				return objects
+			},
+			value: []interface{}{
+				map[string]interface{}{
+					"string":  "bye",
+					"integer": 8,
+				},
+				map[string]interface{}{
+					"string":  "hello",
+					"integer": 12,
+				},
+			},
+			err: true,
+		},
+		{
+			name: "array validation",
+			makeProp: func(t *test) *Prop {
+				string, err := NewString("string", WithRequired(true), WithEnum("hello", "bye"))
+				utils.Ok(err)
+
+				integer, err := NewInteger("integer", WithRequired(true), WithInterval(10, 15))
+				utils.Ok(err)
+
+				objects, err := NewObject("objects", WithArray(), WithProps(string, integer))
+				utils.Ok(err)
+
+				return objects
+			},
+			value: []interface{}{
+				map[string]interface{}{
+					"string":  "hello",
+					"integer": 12,
+				},
+				map[string]interface{}{
+					"string":  "other",
+					"integer": 12,
+				},
+			},
+			err: true,
+		},
+		{
+			name: "valid object with sub props",
 			makeProp: func(t *test) *Prop {
 				string, err := NewString("string", WithRequired(true), WithEnum("hello", "bye"))
 				utils.Ok(err)
@@ -233,6 +285,32 @@ func TestValidateValue(t *testing.T) {
 			value: map[string]interface{}{
 				"string":  "hello",
 				"integer": 12,
+			},
+			err: false,
+		},
+		{
+			name: "array validation",
+			makeProp: func(t *test) *Prop {
+				string, err := NewString("string", WithRequired(true), WithEnum("hello", "bye"))
+				utils.Ok(err)
+
+				integer, err := NewInteger("integer", WithRequired(true), WithInterval(10, 15))
+				utils.Ok(err)
+
+				objects, err := NewObject("objects", WithArray(), WithProps(string, integer))
+				utils.Ok(err)
+
+				return objects
+			},
+			value: []interface{}{
+				map[string]interface{}{
+					"string":  "hello",
+					"integer": 12,
+				},
+				map[string]interface{}{
+					"string":  "bye",
+					"integer": 15,
+				},
 			},
 			err: false,
 		},
