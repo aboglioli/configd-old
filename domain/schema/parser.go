@@ -124,10 +124,12 @@ func parseProps(m map[string]interface{}) ([]*props.Prop, error) {
 
 func parseSchemaProp(propName string, schema *propSchema, opts ...props.Option) (*props.Prop, error) {
 	// Parse options
-	opts = append(opts, props.WithRequired(schema.Required))
-
 	if schema.Default != nil {
 		opts = append(opts, props.WithDefault(schema.Default))
+	}
+
+	if schema.Required {
+		opts = append(opts, props.WithRequired())
 	}
 
 	if schema.Enum != nil {

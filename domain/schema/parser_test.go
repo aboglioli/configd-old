@@ -91,7 +91,7 @@ func TestSchemaFromJson(t *testing.T) {
 				utils.Ok(err)
 
 				// Internal service
-				url, err := props.NewString("url", props.WithRequired(true))
+				url, err := props.NewString("url", props.WithRequired())
 				utils.Ok(err)
 
 				port, err := props.NewInteger("port", props.WithDefault(8080), props.WithInterval(80, 18080))

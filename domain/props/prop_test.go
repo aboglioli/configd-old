@@ -67,13 +67,6 @@ func TestBuildProps(t *testing.T) {
 			err: true,
 		},
 		{
-			name: "object not required",
-			makeProp: func() (*Prop, error) {
-				return NewObject("env", WithRequired(false))
-			},
-			err: true,
-		},
-		{
 			name: "object with default",
 			makeProp: func() (*Prop, error) {
 				return NewObject("env", WithDefault("hello"))
@@ -116,7 +109,7 @@ func TestBuildProps(t *testing.T) {
 			makeProp: func() (*Prop, error) {
 				str, err := NewString(
 					"str",
-					WithRequired(true),
+					WithRequired(),
 					WithDefault("default"),
 					WithEnum("str1", "str2"),
 				)
@@ -136,14 +129,14 @@ func TestBuildProps(t *testing.T) {
 				name:     "obj",
 				required: true,
 				props: map[string]*Prop{
-					"str": &Prop{
+					"str": {
 						t:        STRING,
 						name:     "str",
 						required: true,
 						def:      "default",
 						enum:     []interface{}{"str1", "str2"},
 					},
-					"num": &Prop{
+					"num": {
 						t:        INT,
 						name:     "num",
 						enum:     []interface{}{1, 5, 10},
@@ -179,10 +172,10 @@ func TestValidateValue(t *testing.T) {
 		{
 			name: "object with invalid sub props",
 			makeProp: func(t *test) *Prop {
-				string, err := NewString("string", WithRequired(true), WithEnum("hello", "bye"))
+				string, err := NewString("string", WithRequired(), WithEnum("hello", "bye"))
 				utils.Ok(err)
 
-				integer, err := NewInteger("integer", WithRequired(true), WithInterval(10, 15))
+				integer, err := NewInteger("integer", WithRequired(), WithInterval(10, 15))
 				utils.Ok(err)
 
 				object, err := NewObject("object", WithProps(string, integer))
@@ -199,10 +192,10 @@ func TestValidateValue(t *testing.T) {
 		{
 			name: "object with invalid sub props",
 			makeProp: func(t *test) *Prop {
-				string, err := NewString("string", WithRequired(true), WithEnum("hello", "bye"))
+				string, err := NewString("string", WithRequired(), WithEnum("hello", "bye"))
 				utils.Ok(err)
 
-				integer, err := NewInteger("integer", WithRequired(true), WithInterval(10, 15))
+				integer, err := NewInteger("integer", WithRequired(), WithInterval(10, 15))
 				utils.Ok(err)
 
 				object, err := NewObject("object", WithProps(string, integer))
@@ -219,10 +212,10 @@ func TestValidateValue(t *testing.T) {
 		{
 			name: "array validation",
 			makeProp: func(t *test) *Prop {
-				string, err := NewString("string", WithRequired(true), WithEnum("hello", "bye"))
+				string, err := NewString("string", WithRequired(), WithEnum("hello", "bye"))
 				utils.Ok(err)
 
-				integer, err := NewInteger("integer", WithRequired(true), WithInterval(10, 15))
+				integer, err := NewInteger("integer", WithRequired(), WithInterval(10, 15))
 				utils.Ok(err)
 
 				objects, err := NewObject("objects", WithArray(), WithProps(string, integer))
@@ -245,10 +238,10 @@ func TestValidateValue(t *testing.T) {
 		{
 			name: "array validation",
 			makeProp: func(t *test) *Prop {
-				string, err := NewString("string", WithRequired(true), WithEnum("hello", "bye"))
+				string, err := NewString("string", WithRequired(), WithEnum("hello", "bye"))
 				utils.Ok(err)
 
-				integer, err := NewInteger("integer", WithRequired(true), WithInterval(10, 15))
+				integer, err := NewInteger("integer", WithRequired(), WithInterval(10, 15))
 				utils.Ok(err)
 
 				objects, err := NewObject("objects", WithArray(), WithProps(string, integer))
@@ -271,10 +264,10 @@ func TestValidateValue(t *testing.T) {
 		{
 			name: "valid object with sub props",
 			makeProp: func(t *test) *Prop {
-				string, err := NewString("string", WithRequired(true), WithEnum("hello", "bye"))
+				string, err := NewString("string", WithRequired(), WithEnum("hello", "bye"))
 				utils.Ok(err)
 
-				integer, err := NewInteger("integer", WithRequired(true), WithInterval(10, 15))
+				integer, err := NewInteger("integer", WithRequired(), WithInterval(10, 15))
 				utils.Ok(err)
 
 				object, err := NewObject("object", WithProps(string, integer))
@@ -291,10 +284,10 @@ func TestValidateValue(t *testing.T) {
 		{
 			name: "array validation",
 			makeProp: func(t *test) *Prop {
-				string, err := NewString("string", WithRequired(true), WithEnum("hello", "bye"))
+				string, err := NewString("string", WithRequired(), WithEnum("hello", "bye"))
 				utils.Ok(err)
 
-				integer, err := NewInteger("integer", WithRequired(true), WithInterval(10, 15))
+				integer, err := NewInteger("integer", WithRequired(), WithInterval(10, 15))
 				utils.Ok(err)
 
 				objects, err := NewObject("objects", WithArray(), WithProps(string, integer))

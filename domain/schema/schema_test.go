@@ -144,7 +144,7 @@ func TestValidateSchema(t *testing.T) {
 				integer, err := props.NewInteger("integer", props.WithInterval(4, 6))
 				utils.Ok(err)
 
-				str, err := props.NewString("str", props.WithRequired(true))
+				str, err := props.NewString("str", props.WithRequired())
 				utils.Ok(err)
 
 				obj, err := props.NewObject("obj", props.WithProps(integer, str))
@@ -200,7 +200,7 @@ func TestValidateSchema(t *testing.T) {
 				floats, err := props.NewFloat("floats", props.WithArray(), props.WithInterval(2.5, 15.65))
 				utils.Ok(err)
 
-				booleans, err := props.NewBool("booleans", props.WithArray(), props.WithRequired(true))
+				booleans, err := props.NewBool("booleans", props.WithArray(), props.WithRequired())
 				utils.Ok(err)
 
 				object, err := props.NewObject("object", props.WithProps(floats, booleans))
@@ -252,7 +252,7 @@ func TestValidateSchema(t *testing.T) {
 				floats, err := props.NewFloat("floats", props.WithArray(), props.WithInterval(2.5, 15.65))
 				utils.Ok(err)
 
-				booleans, err := props.NewBool("booleans", props.WithArray(), props.WithRequired(true))
+				booleans, err := props.NewBool("booleans", props.WithArray(), props.WithRequired())
 				utils.Ok(err)
 
 				object, err := props.NewObject("object", props.WithProps(floats, booleans))

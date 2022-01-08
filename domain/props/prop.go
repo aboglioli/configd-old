@@ -55,7 +55,7 @@ func NewBool(name string, opts ...Option) (*Prop, error) {
 
 func NewObject(name string, opts ...Option) (*Prop, error) {
 	// Objects should be required always
-	opts = append(opts, WithRequired(true))
+	opts = append(opts, WithRequired())
 
 	return newValue(
 		name,

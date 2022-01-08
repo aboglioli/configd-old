@@ -41,13 +41,9 @@ func WithDefault(d interface{}) Option {
 	}
 }
 
-func WithRequired(r bool) Option {
+func WithRequired() Option {
 	return func(p *Prop) error {
-		if p.t == OBJECT && !r {
-			return fmt.Errorf("%s must be required", p.t)
-		}
-
-		p.required = r
+		p.required = true
 		return nil
 	}
 }
