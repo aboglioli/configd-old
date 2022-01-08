@@ -3,14 +3,9 @@ package props
 import (
 	"testing"
 
+	"github.com/aboglioli/configd/utils"
 	"github.com/stretchr/testify/assert"
 )
-
-func ok(err error) {
-	if err != nil {
-		panic(err)
-	}
-}
 
 func TestBuildProps(t *testing.T) {
 	tests := []struct {
@@ -110,7 +105,7 @@ func TestBuildProps(t *testing.T) {
 			name: "non-object with props",
 			makeProp: func() (*prop, error) {
 				prop, err := NewString("str")
-				ok(err)
+				utils.Ok(err)
 
 				return NewString("env", WithProps(prop))
 			},
@@ -125,14 +120,14 @@ func TestBuildProps(t *testing.T) {
 					WithDefault("default"),
 					WithEnum("str1", "str2"),
 				)
-				ok(err)
+				utils.Ok(err)
 
 				num, err := NewInteger(
 					"num",
 					WithEnum(1, 5, 10),
 					WithInterval(0, 10),
 				)
-				ok(err)
+				utils.Ok(err)
 
 				return NewObject("obj", WithProps(str, num))
 			},
