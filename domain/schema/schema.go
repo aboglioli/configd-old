@@ -5,18 +5,18 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/aboglioli/configd/common/model"
+	"github.com/aboglioli/configd/common/models"
 	"github.com/aboglioli/configd/domain/config"
 	"github.com/aboglioli/configd/domain/props"
 )
 
 type Schema struct {
-	slug  *model.Slug
+	slug  *models.Slug
 	name  *Name
 	props map[string]*props.Prop
 }
 
-func BuildSchema(slug *model.Slug, name *Name, ps ...*props.Prop) (*Schema, error) {
+func BuildSchema(slug *models.Slug, name *Name, ps ...*props.Prop) (*Schema, error) {
 	if len(ps) == 0 {
 		return nil, errors.New("schema does not have props")
 	}
@@ -34,7 +34,7 @@ func BuildSchema(slug *model.Slug, name *Name, ps ...*props.Prop) (*Schema, erro
 }
 
 func NewSchema(name *Name, ps ...*props.Prop) (*Schema, error) {
-	slug, err := model.NewSlug(name.Value())
+	slug, err := models.NewSlug(name.Value())
 	if err != nil {
 		return nil, err
 	}
@@ -42,7 +42,7 @@ func NewSchema(name *Name, ps ...*props.Prop) (*Schema, error) {
 	return BuildSchema(slug, name, ps...)
 }
 
-func (s *Schema) Slug() *model.Slug {
+func (s *Schema) Slug() *models.Slug {
 	return s.slug
 }
 

@@ -3,21 +3,21 @@ package config
 import (
 	"errors"
 
-	"github.com/aboglioli/configd/common/model"
+	"github.com/aboglioli/configd/common/models"
 )
 
 type ConfigData map[string]interface{}
 
 type Config struct {
-	schemaSlug *model.Slug
-	slug       *model.Slug
+	schemaSlug *models.Slug
+	slug       *models.Slug
 	name       *Name
 	config     ConfigData
 }
 
 func BuildConfig(
-	schemaSlug *model.Slug,
-	slug *model.Slug,
+	schemaSlug *models.Slug,
+	slug *models.Slug,
 	name *Name,
 	config ConfigData,
 ) (*Config, error) {
@@ -35,11 +35,11 @@ func BuildConfig(
 }
 
 func NewConfig(
-	schemaSlug *model.Slug,
+	schemaSlug *models.Slug,
 	name *Name,
 	config ConfigData,
 ) (*Config, error) {
-	slug, err := model.NewSlug(name.Value())
+	slug, err := models.NewSlug(name.Value())
 	if err != nil {
 		return nil, err
 	}
@@ -47,11 +47,11 @@ func NewConfig(
 	return BuildConfig(schemaSlug, slug, name, config)
 }
 
-func (c *Config) SchemaSlug() *model.Slug {
+func (c *Config) SchemaSlug() *models.Slug {
 	return c.schemaSlug
 }
 
-func (c *Config) Slug() *model.Slug {
+func (c *Config) Slug() *models.Slug {
 	return c.slug
 }
 
