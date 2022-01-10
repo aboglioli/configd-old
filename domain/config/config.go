@@ -9,15 +9,16 @@ import (
 type ConfigData map[string]interface{}
 
 type Config struct {
-	schemaSlug models.Slug
-	slug       models.Slug
-	name       Name
-	config     ConfigData
+	agg *models.AggregateRoot
+
+	schemaId models.Id
+	name     Name
+	config   ConfigData
 }
 
 func BuildConfig(
-	schemaSlug models.Slug,
-	slug models.Slug,
+	slug models.Id,
+	schemaId models.Id,
 	name Name,
 	config ConfigData,
 ) (*Config, error) {
@@ -25,17 +26,22 @@ func BuildConfig(
 		return nil, errors.New("empty configuration")
 	}
 
+	agg, err := models.NewAggregateRoot(slug)
+	if err != nil {
+		return nil, err
+	}
+
 	return &Config{
-		schemaSlug: schemaSlug,
-		slug:       slug,
-		name:       name,
-		config:     config,
+		agg:      agg,
+		schemaId: schemaId,
+		name:     name,
+		config:   config,
 	}, nil
 
 }
 
 func NewConfig(
-	schemaSlug models.Slug,
+	schemaId models.Id,
 	name Name,
 	config ConfigData,
 ) (*Config, error) {
@@ -44,15 +50,15 @@ func NewConfig(
 		return nil, err
 	}
 
-	return BuildConfig(schemaSlug, slug, name, config)
+	return BuildConfig(schemaId, slug, name, config)
 }
 
-func (c *Config) SchemaSlug() models.Slug {
-	return c.schemaSlug
+func (c *Config) Base() models.PublicAggregateRoot {
+	return c.agg
 }
 
-func (c *Config) Slug() models.Slug {
-	return c.slug
+func (c *Config) SchemaId() models.Id {
+	return c.schemaId
 }
 
 func (c *Config) Name() Name {

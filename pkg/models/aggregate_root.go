@@ -7,15 +7,31 @@ import (
 	"github.com/aboglioli/configd/pkg/events"
 )
 
+type PublicAggregateRoot interface {
+	Id() Id
+	CreatedAt() time.Time
+	UpdatedAt() time.Time
+	DeletedAt() *time.Time
+	Events() []events.Event
+	Version() uint
+}
+
+var _ PublicAggregateRoot = (*AggregateRoot)(nil)
+
 type AggregateRoot struct {
-	events    []*events.Event
+	id Id
+
 	createdAt time.Time
 	updatedAt time.Time
 	deletedAt *time.Time
-	version   uint
+
+	events []events.Event
+
+	version uint
 }
 
 func BuildAggregateRoot(
+	id Id,
 	createdAt time.Time,
 	updatedAt time.Time,
 	deletedAt *time.Time,
@@ -30,23 +46,24 @@ func BuildAggregateRoot(
 	}
 
 	return &AggregateRoot{
-		events:    make([]*events.Event, 0),
+		id:        id,
 		createdAt: createdAt,
 		updatedAt: updatedAt,
 		deletedAt: deletedAt,
+		events:    make([]events.Event, 0),
 		version:   version,
 	}, nil
 }
 
-func NewAggregateRoot() (*AggregateRoot, error) {
-	return BuildAggregateRoot(time.Now(), time.Now(), nil, 1)
+func NewAggregateRoot(id Id) (*AggregateRoot, error) {
+	return BuildAggregateRoot(id, time.Now(), time.Now(), nil, 1)
 }
 
-func (a *AggregateRoot) Events() []*events.Event {
-	return a.events
+func (a *AggregateRoot) Id() Id {
+	return a.id
 }
 
-func (a *AggregateRoot) RecordEvents(events ...*events.Event) {
+func (a *AggregateRoot) RecordEvent(events ...events.Event) {
 	a.events = append(a.events, events...)
 }
 
@@ -65,4 +82,12 @@ func (a *AggregateRoot) Update() {
 
 func (a *AggregateRoot) DeletedAt() *time.Time {
 	return a.deletedAt
+}
+
+func (a *AggregateRoot) Events() []events.Event {
+	return a.events
+}
+
+func (a *AggregateRoot) Version() uint {
+	return a.version
 }

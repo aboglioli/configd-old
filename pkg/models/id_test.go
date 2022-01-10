@@ -14,7 +14,7 @@ func TestSlug(t *testing.T) {
 	type test struct {
 		name     string
 		args     args
-		expected Slug
+		expected Id
 		err      bool
 	}
 
@@ -31,8 +31,8 @@ func TestSlug(t *testing.T) {
 			args: args{
 				name: "My Distributed Service 01 !",
 			},
-			expected: Slug{
-				slug: "my-distributed-service-01",
+			expected: Id{
+				id: "my-distributed-service-01",
 			},
 		},
 	}

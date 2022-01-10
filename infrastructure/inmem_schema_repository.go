@@ -20,7 +20,7 @@ func NewInMemSchemaRepository() *inMemSchemaRepository {
 	}
 }
 
-func (r *inMemSchemaRepository) FindById(slug models.Slug) (*schema.Schema, error) {
+func (r *inMemSchemaRepository) FindById(slug models.Id) (*schema.Schema, error) {
 	r.mux.Lock()
 	defer r.mux.Unlock()
 
@@ -35,12 +35,12 @@ func (r *inMemSchemaRepository) Save(schema *schema.Schema) error {
 	r.mux.Lock()
 	defer r.mux.Unlock()
 
-	r.schemas[schema.Slug().Value()] = schema
+	r.schemas[schema.Base().Id().Value()] = schema
 
 	return nil
 }
 
-func (r *inMemSchemaRepository) Delete(slug models.Slug) error {
+func (r *inMemSchemaRepository) Delete(slug models.Id) error {
 	r.mux.Lock()
 	defer r.mux.Unlock()
 

@@ -4,13 +4,14 @@ import (
 	"errors"
 
 	"github.com/google/uuid"
+	"github.com/gosimple/slug"
 )
 
 type Id struct {
 	id string
 }
 
-func NewId(id string) (Id, error) {
+func BuildId(id string) (Id, error) {
 	if len(id) < 4 {
 		return Id{}, errors.New("id too short")
 	}
@@ -20,8 +21,12 @@ func NewId(id string) (Id, error) {
 	}, nil
 }
 
-func GenerateId() (Id, error) {
-	return NewId(uuid.NewString())
+func NewUuid() (Id, error) {
+	return BuildId(uuid.NewString())
+}
+
+func NewSlug(str string) (Id, error) {
+	return BuildId(slug.Make(str))
 }
 
 func (id Id) Value() string {

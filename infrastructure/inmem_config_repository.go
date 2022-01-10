@@ -20,7 +20,7 @@ func NewInMemConfigRepository() *inMemConfigRepository {
 	}
 }
 
-func (r *inMemConfigRepository) FindById(slug models.Slug) (*config.Config, error) {
+func (r *inMemConfigRepository) FindById(slug models.Id) (*config.Config, error) {
 	r.mux.Lock()
 	defer r.mux.Unlock()
 
@@ -31,7 +31,7 @@ func (r *inMemConfigRepository) FindById(slug models.Slug) (*config.Config, erro
 	return nil, config.ErrNotFound
 }
 
-func (r *inMemConfigRepository) FindBySchemaId(schemaSlug models.Slug) ([]*config.Config, error) {
+func (r *inMemConfigRepository) FindBySchemaId(schemaSlug models.Id) ([]*config.Config, error) {
 	r.mux.Lock()
 	defer r.mux.Unlock()
 
@@ -50,12 +50,12 @@ func (r *inMemConfigRepository) Save(config *config.Config) error {
 	r.mux.Lock()
 	defer r.mux.Unlock()
 
-	r.configs[config.Slug().Value()] = config
+	r.configs[config.Base().Id().Value()] = config
 
 	return nil
 }
 
-func (r *inMemConfigRepository) Delete(slug models.Slug) error {
+func (r *inMemConfigRepository) Delete(slug models.Id) error {
 	r.mux.Lock()
 	defer r.mux.Unlock()
 

@@ -7,13 +7,13 @@ import (
 )
 
 type CreateSchemaCommand struct {
-	Name   string
-	Schema map[string]interface{}
+	Name   string                 `json:"name"`
+	Schema map[string]interface{} `json:"schema"`
 }
 
 type CreateSchemaResponse struct {
-	Slug string
-	Name string
+	Id   string `json:"id"`
+	Name string `json:"name"`
 }
 
 type CreateSchema struct {
@@ -42,7 +42,7 @@ func (uc *CreateSchema) Exec(
 	}
 
 	return &CreateSchemaResponse{
-		Slug: s.Slug().Value(),
+		Id:   s.Base().Id().Value(),
 		Name: s.Name().Value(),
 	}, nil
 }

@@ -1,7 +1,6 @@
 package schema
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
 
@@ -11,12 +10,13 @@ import (
 )
 
 type Schema struct {
-	slug  models.Slug
+	agg *models.AggregateRoot
+
 	name  Name
 	props map[string]*props.Prop
 }
 
-func BuildSchema(slug models.Slug, name Name, ps ...*props.Prop) (*Schema, error) {
+func BuildSchema(slug models.Id, name Name, ps ...*props.Prop) (*Schema, error) {
 	if len(ps) == 0 {
 		return nil, errors.New("schema does not have props")
 	}
@@ -26,8 +26,13 @@ func BuildSchema(slug models.Slug, name Name, ps ...*props.Prop) (*Schema, error
 		psMap[p.Name()] = p
 	}
 
+	agg, err := models.NewAggregateRoot(slug)
+	if err != nil {
+		return nil, err
+	}
+
 	return &Schema{
-		slug:  slug,
+		agg:   agg,
 		name:  name,
 		props: psMap,
 	}, nil
@@ -42,8 +47,8 @@ func NewSchema(name Name, ps ...*props.Prop) (*Schema, error) {
 	return BuildSchema(slug, name, ps...)
 }
 
-func (s *Schema) Slug() models.Slug {
-	return s.slug
+func (s *Schema) Base() models.PublicAggregateRoot {
+	return s.agg
 }
 
 func (s *Schema) Name() Name {
@@ -67,14 +72,4 @@ func (s *Schema) Validate(c config.ConfigData) error {
 	}
 
 	return nil
-}
-
-func (s *Schema) MarshalJSON() ([]byte, error) {
-	d := map[string]interface{}{
-		"slug":  s.slug.Value(),
-		"name":  s.name.Value(),
-		"props": s.props,
-	}
-
-	return json.Marshal(&d)
 }
