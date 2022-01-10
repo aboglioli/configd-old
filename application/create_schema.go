@@ -12,8 +12,9 @@ type CreateSchemaCommand struct {
 }
 
 type CreateSchemaResponse struct {
-	Id   string `json:"id"`
-	Name string `json:"name"`
+	Id     string                 `json:"id"`
+	Name   string                 `json:"name"`
+	Schema map[string]interface{} `json:"schema"`
 }
 
 type CreateSchema struct {
@@ -32,7 +33,17 @@ func (uc *CreateSchema) Exec(
 	ctx context.Context,
 	cmd *CreateSchemaCommand,
 ) (*CreateSchemaResponse, error) {
-	s, err := schema.FromMap(cmd.Name, cmd.Schema)
+	props, err := schema.PropsFromMap(cmd.Schema)
+	if err != nil {
+		return nil, err
+	}
+
+	n, err := schema.NewName(cmd.Name)
+	if err != nil {
+		return nil, err
+	}
+
+	s, err := schema.NewSchema(n, props...)
 	if err != nil {
 		return nil, err
 	}
@@ -42,7 +53,8 @@ func (uc *CreateSchema) Exec(
 	}
 
 	return &CreateSchemaResponse{
-		Id:   s.Base().Id().Value(),
-		Name: s.Name().Value(),
+		Id:     s.Base().Id().Value(),
+		Name:   s.Name().Value(),
+		Schema: s.ToMap(),
 	}, nil
 }

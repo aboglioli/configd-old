@@ -8,80 +8,74 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestSchemaFromJson(t *testing.T) {
-	type args struct {
-		json string
-	}
-
+func TestPropsFromJson(t *testing.T) {
 	type test struct {
 		name     string
-		args     args
-		expected func(t *test) *Schema
+		json     string
+		expected func(t *test) []*props.Prop
 		err      bool
 	}
 
 	tests := []test{
 		{
 			name: "valid",
-			args: args{
-				json: `
-					{
-					  "env":{
-						"$schema":{
-						  "type":"string",
-						  "enum":[
-							"dev",
-							"staging",
-							"prod"
-						  ]
-						}
-					  },
-					  "version":{
-						"$schema":{
-						  "type":"string",
-						  "regex":"v[0-9]+"
-						}
-					  },
-					  "internal_service":{
-						"url":{
-						  "$schema":{
-							"type":"string",
-							"required":true
-						  }
-						},
-						"port":{
-						  "$schema":{
-							"type":"integer",
-							"default":8080,
-							"interval":{
-							  "min":80,
-							  "max":18080
-							}
-						  }
-						}
-					  },
-					  "circuit_breaker":{
-						"threshold":{
-						  "$schema":{
-							"type":"float",
-							"default":0.6
-						  }
-						}
-					  },
-					  "nested_object":{
-						"inner_object":{
-						  "value":{
-							"$schema":{
-							  "type":"float",
-							  "default":12.75
-							}
-						  }
+			json: `
+				{
+				  "env":{
+					"$schema":{
+					  "type":"string",
+					  "enum":[
+						"dev",
+						"staging",
+						"prod"
+					  ]
+					}
+				  },
+				  "version":{
+					"$schema":{
+					  "type":"string",
+					  "regex":"v[0-9]+"
+					}
+				  },
+				  "internal_service":{
+					"url":{
+					  "$schema":{
+						"type":"string",
+						"required":true
+					  }
+					},
+					"port":{
+					  "$schema":{
+						"type":"integer",
+						"default":8080,
+						"interval":{
+						  "min":80,
+						  "max":18080
 						}
 					  }
 					}
-				`,
-			},
-			expected: func(t *test) *Schema {
+				  },
+				  "circuit_breaker":{
+					"threshold":{
+					  "$schema":{
+						"type":"float",
+						"default":0.6
+					  }
+					}
+				  },
+				  "nested_object":{
+					"inner_object":{
+					  "value":{
+						"$schema":{
+						  "type":"float",
+						  "default":12.75
+						}
+					  }
+					}
+				  }
+				}
+			`,
+			expected: func(t *test) []*props.Prop {
 				// Env
 				env, err := props.NewString("env", props.WithEnum("dev", "staging", "prod"))
 				utils.Ok(err)
@@ -120,77 +114,68 @@ func TestSchemaFromJson(t *testing.T) {
 				nestedObject, err := props.NewObject("nested_object", props.WithProps(innerObject))
 				utils.Ok(err)
 
-				n, err := NewName(t.name)
-				utils.Ok(err)
-
-				s, err := NewSchema(
-					n,
+				return []*props.Prop{
 					env,
 					version,
 					internalService,
 					circuitBreaker,
 					nestedObject,
-				)
-				utils.Ok(err)
-
-				return s
+				}
 			},
 		},
 		{
 			name: "valid with array",
-			args: args{
-				json: `
-					{
-					  "cache": {
-						"addresses": [
-						  {
-							"$schema": {
-							  "type": "string",
-							  "regex": "^https://[a-z0-9.-]+$"
-							}
+			json: `
+				{
+				  "cache": {
+					"addresses": [
+					  {
+						"$schema": {
+						  "type": "string",
+						  "regex": "^https://[a-z0-9.-]+$"
+						}
+					  }
+					]
+				  },
+				  "inner": {
+					"object": [
+					  {
+						"prop": {
+						  "$schema": {
+							"type": "string"
 						  }
-						]
-					  },
-					  "inner": {
-						"object": [
-						  {
-							"prop": {
-							  "$schema": {
-								"type": "string"
+						}
+					  }
+					]
+				  },
+				  "arr1": [
+					{
+					  "arr2": [
+						{
+						  "float": {
+							"$schema": {
+							  "type": "float",
+							  "interval": {
+								"min": 1.5,
+								"max": 6.8
 							  }
 							}
-						  }
-						]
-					  },
-					  "arr1": [
-						{
-						  "arr2": [
+						  },
+						  "integers": [
 							{
-							  "float": {
-								"$schema": {
-								  "type": "float",
-								  "interval": {
-									"min": 1.5,
-									"max": 6.8
-								  }
-								}
-							  },
-							  "integers": [
-								{
-								  "$schema": {
-									"type": "integer",
-									"enum": [4, 5, 6]
-								  }
-								}
-							  ]
+							  "$schema": {
+								"type": "integer",
+								"enum": [4, 5, 6]
+							  }
 							}
 						  ]
 						}
 					  ]
 					}
-				`,
-			},
-			expected: func(t *test) *Schema {
+				  ]
+				}
+			`,
+			expected: func(t *test) []*props.Prop {
 				// Cache
 				addresses, err := props.NewString(
 					"addresses",
@@ -236,114 +221,99 @@ func TestSchemaFromJson(t *testing.T) {
 					props.WithProps(arr2),
 				)
 
-				n, err := NewName(t.name)
-				utils.Ok(err)
-
-				s, err := NewSchema(
-					n,
+				return []*props.Prop{
 					cache,
 					inner,
 					arr1,
-				)
-				utils.Ok(err)
-
-				return s
+				}
 			},
 		},
 		{
 			name: "invalid object with array schema",
-			args: args{
-				json: `
-					{
-					  "cache": {
-						"addresses": [
-						  {
-							"$schema": {
-							  "type": "string",
-							  "regex": "^https://[a-z0-9.-]+$"
-							}
-						  },
-						  {
-							"$schema": {
-							  "type": "string",
-							  "regex": "^https://[a-z0-9.-]+$"
-							}
-						  }
-						]
+			json: `
+				{
+				  "cache": {
+					"addresses": [
+					  {
+						"$schema": {
+						  "type": "string",
+						  "regex": "^https://[a-z0-9.-]+$"
+						}
+					  },
+					  {
+						"$schema": {
+						  "type": "string",
+						  "regex": "^https://[a-z0-9.-]+$"
+						}
 					  }
-					}
-				`,
-			},
-			expected: func(t *test) *Schema {
+					]
+				  }
+				}
+			`,
+			expected: func(t *test) []*props.Prop {
 				return nil
 			},
 			err: true,
 		},
 		{
 			name: "invalid object with multiple objects in array",
-			args: args{
-				json: `
-					{
-					  "cache": {
-						"addresses": [
-						  {
-							"type": {
-							  "$schema": {
-								"type": "string"
-							  }
-							}
-						  },
-						  {
-							"type": {
-							  "$schema": {
-								"type": "string"
-							  }
-							}
+			json: `
+				{
+				  "cache": {
+					"addresses": [
+					  {
+						"type": {
+						  "$schema": {
+							"type": "string"
 						  }
-						]
+						}
+					  },
+					  {
+						"type": {
+						  "$schema": {
+							"type": "string"
+						  }
+						}
 					  }
-					}
-				`,
-			},
-			expected: func(t *test) *Schema {
+					]
+				  }
+				}
+			`,
+			expected: func(t *test) []*props.Prop {
 				return nil
 			},
 			err: true,
 		},
 		{
 			name: "schema without type",
-			args: args{
-				json: `
-					{
-					  "env":{
-						"$schema":{
-						  "type":"string",
-						  "enut":[
-							"dev",
-							"staging",
-							"prod"
-						  ]
-						}
-					  },
-					  "version":{
-						"$schema":{
-						  "regex":"v[0-9]+"
-						}
-					  },
+			json: `
+				{
+				  "env":{
+					"$schema":{
+					  "type":"string",
+					  "enut":[
+						"dev",
+						"staging",
+						"prod"
+					  ]
 					}
-				`,
-			},
-			expected: func(t *test) *Schema {
+				  },
+				  "version":{
+					"$schema":{
+					  "regex":"v[0-9]+"
+					}
+				  },
+				}
+			`,
+			expected: func(t *test) []*props.Prop {
 				return nil
 			},
 			err: true,
 		},
 		{
 			name: "empty schema",
-			args: args{
-				json: `{}`,
-			},
-			expected: func(t *test) *Schema {
+			json: `{}`,
+			expected: func(t *test) []*props.Prop {
 				return nil
 			},
 			err: true,
@@ -352,84 +322,63 @@ func TestSchemaFromJson(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			schema, err := FromJson(test.name, test.args.json)
+			props, err := PropsFromJson(test.json)
+			expectedProps := test.expected(&test)
+
+			assert.Equal(t, expectedProps, props)
 
 			if test.err {
 				assert.NotNil(t, err)
 			} else {
 				assert.Nil(t, err)
-
-				expectedSchema := test.expected(&test)
-
-				assert.Equal(t, expectedSchema.Base().Id(), schema.Base().Id())
-				assert.Equal(t, expectedSchema.Name(), schema.Name())
-				assert.Equal(t, expectedSchema.Props(), schema.Props())
 			}
 		})
 	}
 }
 
-func TestSchemaFromMap(t *testing.T) {
-	type args struct {
-		m map[string]interface{}
-	}
-
+func TestPropsFromMap(t *testing.T) {
 	type test struct {
 		name     string
-		args     args
-		expected func(t *test) *Schema
+		m        map[string]interface{}
+		expected func(t *test) []*props.Prop
 		err      bool
 	}
 
 	tests := []test{
 		{
 			name: "valid",
-			args: args{
-				m: map[string]interface{}{
-					"env": map[string]interface{}{
-						"$schema": map[string]interface{}{
-							"type": "integer",
-							"interval": map[string]interface{}{
-								"min": 1,
-								"max": 256,
-							},
+			m: map[string]interface{}{
+				"env": map[string]interface{}{
+					"$schema": map[string]interface{}{
+						"type": "integer",
+						"interval": map[string]interface{}{
+							"min": 1,
+							"max": 256,
 						},
 					},
 				},
 			},
-			expected: func(t *test) *Schema {
+			expected: func(t *test) []*props.Prop {
 				// Env
 				env, err := props.NewInteger("env", props.WithInterval(1, 256))
 				utils.Ok(err)
 
-				n, err := NewName(t.name)
-				utils.Ok(err)
-
-				s, err := NewSchema(
-					n,
-					env,
-				)
-				utils.Ok(err)
-
-				return s
+				return []*props.Prop{env}
 			},
 		},
 	}
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			schema, err := FromMap(test.name, test.args.m)
+			props, err := PropsFromMap(test.m)
+			expectedProps := test.expected(&test)
+
+			assert.Equal(t, expectedProps, props)
 
 			if test.err {
 				assert.NotNil(t, err)
 			} else {
 				assert.Nil(t, err)
-
-				expectedSchema := test.expected(&test)
-
-				assert.Equal(t, expectedSchema.Base().Id(), schema.Base().Id())
-				assert.Equal(t, expectedSchema.Name(), schema.Name())
-				assert.Equal(t, expectedSchema.Props(), schema.Props())
 			}
 		})
 	}

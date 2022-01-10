@@ -2,6 +2,7 @@ package schema
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -27,37 +28,21 @@ type propSchema struct {
 	Interval *propSchemaInterval `mapstructure:"interval"`
 }
 
-func FromJson(name string, data string) (*Schema, error) {
+func PropsFromJson(data string) (map[]*props.Prop, error) {
 	var m map[string]interface{}
 	if err := json.Unmarshal([]byte(data), &m); err != nil {
 		return nil, err
 	}
 
-	schema, err := FromMap(name, m)
-	if err != nil {
-		return nil, err
-	}
-
-	return schema, nil
+	return PropsFromMap(m)
 }
 
-func FromMap(name string, data map[string]interface{}) (*Schema, error) {
-	props, err := parseProps(data)
-	if err != nil {
-		return nil, err
+func PropsFromMap(data map[string]interface{}) ([]*props.Prop, error) {
+	if len(data) == 0 {
+		return nil, errors.New("empty schema")
 	}
 
-	n, err := NewName(name)
-	if err != nil {
-		return nil, err
-	}
-
-	s, err := NewSchema(n, props...)
-	if err != nil {
-		return nil, err
-	}
-
-	return s, nil
+	return parseProps(data)
 }
 
 func parseProps(m map[string]interface{}) ([]*props.Prop, error) {
