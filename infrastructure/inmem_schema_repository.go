@@ -3,8 +3,8 @@ package infrastructure
 import (
 	"sync"
 
-	"github.com/aboglioli/configd/common/models"
 	"github.com/aboglioli/configd/domain/schema"
+	"github.com/aboglioli/configd/pkg/models"
 )
 
 var _ schema.SchemaRepository = (*inMemSchemaRepository)(nil)

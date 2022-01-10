@@ -3,7 +3,7 @@ package config
 import (
 	"errors"
 
-	"github.com/aboglioli/configd/common/models"
+	"github.com/aboglioli/configd/pkg/models"
 )
 
 var (

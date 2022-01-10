@@ -5,9 +5,9 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/aboglioli/configd/common/models"
 	"github.com/aboglioli/configd/domain/config"
 	"github.com/aboglioli/configd/domain/props"
+	"github.com/aboglioli/configd/pkg/models"
 )
 
 type Schema struct {

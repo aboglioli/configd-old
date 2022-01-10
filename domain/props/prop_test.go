@@ -3,7 +3,7 @@ package props
 import (
 	"testing"
 
-	"github.com/aboglioli/configd/utils"
+	"github.com/aboglioli/configd/pkg/utils"
 	"github.com/stretchr/testify/assert"
 )
 
