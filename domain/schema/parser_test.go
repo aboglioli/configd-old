@@ -354,11 +354,16 @@ func TestSchemaFromJson(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			schema, err := FromJson(test.name, test.args.json)
 
-			assert.Equal(t, test.expected(&test), schema)
 			if test.err {
 				assert.NotNil(t, err)
 			} else {
 				assert.Nil(t, err)
+
+				expectedSchema := test.expected(&test)
+
+				assert.Equal(t, expectedSchema.Base().Id(), schema.Base().Id())
+				assert.Equal(t, expectedSchema.Name(), schema.Name())
+				assert.Equal(t, expectedSchema.Props(), schema.Props())
 			}
 		})
 	}
@@ -415,11 +420,16 @@ func TestSchemaFromMap(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			schema, err := FromMap(test.name, test.args.m)
 
-			assert.Equal(t, test.expected(&test), schema)
 			if test.err {
 				assert.NotNil(t, err)
 			} else {
 				assert.Nil(t, err)
+
+				expectedSchema := test.expected(&test)
+
+				assert.Equal(t, expectedSchema.Base().Id(), schema.Base().Id())
+				assert.Equal(t, expectedSchema.Name(), schema.Name())
+				assert.Equal(t, expectedSchema.Props(), schema.Props())
 			}
 		})
 	}

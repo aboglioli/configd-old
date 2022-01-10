@@ -31,14 +31,14 @@ func (r *inMemConfigRepository) FindById(slug models.Id) (*config.Config, error)
 	return nil, config.ErrNotFound
 }
 
-func (r *inMemConfigRepository) FindBySchemaId(schemaSlug models.Id) ([]*config.Config, error) {
+func (r *inMemConfigRepository) FindBySchemaId(schemaId models.Id) ([]*config.Config, error) {
 	r.mux.Lock()
 	defer r.mux.Unlock()
 
 	found := make([]*config.Config, 0)
 
 	for _, c := range r.configs {
-		if c.SchemaSlug().Equals(schemaSlug) {
+		if c.SchemaId().Equals(schemaId) {
 			found = append(found, c)
 		}
 	}
