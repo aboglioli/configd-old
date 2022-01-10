@@ -307,3 +307,90 @@ func TestValidateSchema(t *testing.T) {
 		})
 	}
 }
+
+func TestSchemaToMap(t *testing.T) {
+	type test struct {
+		name     string
+		schema   func(t *test) *Schema
+		expected map[string]interface{}
+	}
+
+	tests := []test{
+		{
+			name: "basic schema",
+			schema: func(t *test) *Schema {
+				str, err := props.NewString(
+					"str",
+					props.WithDefault("default"),
+					props.WithEnum("default", "non-default"),
+					props.WithRequired(),
+				)
+				utils.Ok(err)
+
+				int, err := props.NewInteger("int", props.WithInterval(5, 89), props.WithDefault(7))
+				utils.Ok(err)
+
+				float, err := props.NewFloat("float", props.WithInterval(1.5, 7.66), props.WithRequired())
+				utils.Ok(err)
+
+				n, err := NewName(t.name)
+
+				s, err := NewSchema(
+					n,
+					str,
+					int,
+					float,
+				)
+				utils.Ok(err)
+
+				return s
+			},
+			expected: map[string]interface{}{
+				"str": map[string]interface{}{
+					"$schema": map[string]interface{}{
+						"type":     props.STRING,
+						"default":  "default",
+						"required": true,
+						"enum":     []interface{}{"default", "non-default"},
+						"regex":    "",
+						"interval": map[string]interface{}(nil),
+					},
+				},
+				"int": map[string]interface{}{
+					"$schema": map[string]interface{}{
+						"type":     props.INT,
+						"default":  7,
+						"required": false,
+						"enum":     []interface{}(nil),
+						"regex":    "",
+						"interval": map[string]interface{}{
+							"min": 5.0,
+							"max": 89.0,
+						},
+					},
+				},
+				"float": map[string]interface{}{
+					"$schema": map[string]interface{}{
+						"type":     props.FLOAT,
+						"default":  nil,
+						"required": true,
+						"enum":     []interface{}(nil),
+						"regex":    "",
+						"interval": map[string]interface{}{
+							"min": 1.5,
+							"max": 7.66,
+						},
+					},
+				},
+			},
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			s := test.schema(&test)
+
+			assert.Equal(t, test.expected, s.ToMap())
+		})
+	}
+}

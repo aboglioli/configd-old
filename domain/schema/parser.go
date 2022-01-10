@@ -145,13 +145,13 @@ func parseSchemaProp(propName string, schema *propSchema, opts ...props.Option) 
 	}
 
 	switch strings.ToLower(schema.Type) {
-	case string(props.STRING):
+	case props.STRING.String():
 		return props.NewString(propName, opts...)
-	case props.INT:
+	case props.INT.String():
 		return props.NewInteger(propName, opts...)
-	case props.FLOAT:
+	case props.FLOAT.String():
 		return props.NewFloat(propName, opts...)
-	case props.BOOL:
+	case props.BOOL.String():
 		return props.NewBool(propName, opts...)
 	}
 

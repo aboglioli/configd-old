@@ -8,10 +8,10 @@ type PropType string
 
 const (
 	STRING PropType = "string"
-	INT             = "integer"
-	FLOAT           = "float"
-	BOOL            = "bool"
-	OBJECT          = "object"
+	INT    PropType = "integer"
+	FLOAT  PropType = "float"
+	BOOL   PropType = "bool"
+	OBJECT PropType = "object"
 )
 
 func (t PropType) IsValid() bool {
@@ -21,17 +21,21 @@ func (t PropType) IsValid() bool {
 	return false
 }
 
+func (t PropType) String() string {
+	return string(t)
+}
+
 func NewPropType(t string) (PropType, error) {
 	switch t {
-	case string(STRING):
+	case STRING.String():
 		return STRING, nil
-	case string(INT):
+	case INT.String():
 		return INT, nil
-	case string(FLOAT):
+	case FLOAT.String():
 		return FLOAT, nil
-	case string(BOOL):
+	case BOOL.String():
 		return BOOL, nil
-	case string(OBJECT):
+	case OBJECT.String():
 		return OBJECT, nil
 	default:
 		return "", errors.New("invalid type")
