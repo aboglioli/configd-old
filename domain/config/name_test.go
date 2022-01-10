@@ -14,7 +14,7 @@ func TestName(t *testing.T) {
 	type test struct {
 		name     string
 		args     args
-		expected *Name
+		expected Name
 		err      bool
 	}
 
@@ -31,7 +31,7 @@ func TestName(t *testing.T) {
 			args: args{
 				name: "My Distributed Service 01 !",
 			},
-			expected: &Name{
+			expected: Name{
 				name: "My Distributed Service 01 !",
 			},
 		},

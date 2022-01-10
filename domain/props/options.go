@@ -115,7 +115,7 @@ func WithInterval(min, max float64) Option {
 			return err
 		}
 
-		p.interval = interval
+		p.interval = &interval
 		return nil
 	}
 }

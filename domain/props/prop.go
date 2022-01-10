@@ -13,7 +13,7 @@ type Prop struct {
 	required bool
 	enum     []interface{}
 	regex    string
-	interval *interval
+	interval *Interval
 	props    map[string]*Prop
 	array    bool
 }
@@ -88,7 +88,7 @@ func (p *Prop) Regex() string {
 	return p.regex
 }
 
-func (p *Prop) Interval() *interval {
+func (p *Prop) Interval() *Interval {
 	return p.interval
 }
 

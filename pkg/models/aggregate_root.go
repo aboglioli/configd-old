@@ -3,10 +3,12 @@ package models
 import (
 	"fmt"
 	"time"
+
+	"github.com/aboglioli/configd/pkg/events"
 )
 
 type AggregateRoot struct {
-	events    []Event
+	events    []*events.Event
 	createdAt time.Time
 	updatedAt time.Time
 	deletedAt *time.Time
@@ -26,7 +28,7 @@ func BuildAggregateRoot(
 	}
 
 	return &AggregateRoot{
-		events:    make([]Event, 0),
+		events:    make([]*events.Event, 0),
 		createdAt: createdAt,
 		updatedAt: updatedAt,
 		deletedAt: deletedAt,
@@ -37,11 +39,11 @@ func NewAggregateRoot() (*AggregateRoot, error) {
 	return BuildAggregateRoot(time.Now(), time.Now(), nil)
 }
 
-func (a *AggregateRoot) Events() []Event {
+func (a *AggregateRoot) Events() []*events.Event {
 	return a.events
 }
 
-func (a *AggregateRoot) RecordEvents(events ...Event) {
+func (a *AggregateRoot) RecordEvents(events ...*events.Event) {
 	a.events = append(a.events, events...)
 }
 

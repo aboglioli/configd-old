@@ -11,7 +11,7 @@ var (
 )
 
 type SchemaRepository interface {
-	FindById(slug *models.Slug) (*Schema, error)
+	FindById(slug models.Slug) (*Schema, error)
 	Save(schema *Schema) error
-	Delete(slug *models.Slug) error
+	Delete(slug models.Slug) error
 }

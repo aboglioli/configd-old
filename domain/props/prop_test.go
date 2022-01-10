@@ -140,7 +140,7 @@ func TestBuildProps(t *testing.T) {
 						t:        INT,
 						name:     "num",
 						enum:     []interface{}{1, 5, 10},
-						interval: &interval{0, 10},
+						interval: &Interval{0, 10},
 					},
 				},
 			},

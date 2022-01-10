@@ -11,8 +11,8 @@ var (
 )
 
 type ConfigRepository interface {
-	FindById(slug *models.Slug) (*Config, error)
-	FindBySchemaId(schemaSlug *models.Slug) ([]*Config, error)
+	FindById(slug models.Slug) (*Config, error)
+	FindBySchemaId(schemaSlug models.Slug) ([]*Config, error)
 	Save(config *Config) error
-	Delete(slug *models.Slug) error
+	Delete(slug models.Slug) error
 }

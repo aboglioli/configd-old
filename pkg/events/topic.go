@@ -5,30 +5,30 @@ import (
 	"strings"
 )
 
-type topic struct {
+type Topic struct {
 	topic string
 }
 
-func NewTopic(path ...string) (*topic, error) {
+func NewTopic(path ...string) (Topic, error) {
 	if len(path) == 0 {
-		return nil, errors.New("empty topic")
+		return Topic{}, errors.New("empty topic")
 	}
 
 	for _, p := range path {
 		if p == "" {
-			return nil, errors.New("empty topic path")
+			return Topic{}, errors.New("empty topic path")
 		}
 	}
 
-	return &topic{
+	return Topic{
 		topic: strings.Join(path, "."),
 	}, nil
 }
 
-func (t *topic) Value() string {
+func (t Topic) Value() string {
 	return t.topic
 }
 
-func (t *topic) Equals(o *topic) bool {
+func (t Topic) Equals(o Topic) bool {
 	return t.topic == o.topic
 }

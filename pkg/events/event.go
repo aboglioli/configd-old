@@ -6,10 +6,10 @@ import (
 	"github.com/google/uuid"
 )
 
-type event struct {
+type Event struct {
 	id        string
 	aggId     string
-	topic     *topic
+	topic     Topic
 	payload   interface{}
 	timestamp time.Time
 	version   uint
@@ -18,12 +18,12 @@ type event struct {
 func BuildEvent(
 	id string,
 	aggId string,
-	topic *topic,
+	topic Topic,
 	payload interface{},
 	timestamp time.Time,
 	version uint,
-) (*event, error) {
-	return &event{
+) (*Event, error) {
+	return &Event{
 		id:        id,
 		aggId:     aggId,
 		topic:     topic,
@@ -34,9 +34,9 @@ func BuildEvent(
 
 func NewEvent(
 	aggId string,
-	topic *topic,
+	topic Topic,
 	payload interface{},
-) (*event, error) {
+) (*Event, error) {
 	return BuildEvent(
 		uuid.NewString(),
 		aggId,
@@ -47,31 +47,31 @@ func NewEvent(
 	)
 }
 
-func (e *event) Id() string {
+func (e *Event) Id() string {
 	return e.id
 }
 
-func (e *event) AggregateRootId() string {
+func (e *Event) AggregateRootId() string {
 	return e.aggId
 }
 
-func (e *event) Topic() string {
-	return e.topic.Value()
+func (e *Event) Topic() Topic {
+	return e.topic
 }
 
-func (e *event) Payload() interface{} {
+func (e *Event) Payload() interface{} {
 	return e.payload
 }
 
-func (e *event) Timestamp() time.Time {
+func (e *Event) Timestamp() time.Time {
 	return e.timestamp
 }
 
-func (e *event) Version() uint {
+func (e *Event) Version() uint {
 	return e.version
 }
 
-func (e *event) WithVersion(version uint) *event {
+func (e *Event) WithVersion(version uint) *Event {
 	e.version = version
 	return e
 }

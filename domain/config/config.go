@@ -9,16 +9,16 @@ import (
 type ConfigData map[string]interface{}
 
 type Config struct {
-	schemaSlug *models.Slug
-	slug       *models.Slug
-	name       *Name
+	schemaSlug models.Slug
+	slug       models.Slug
+	name       Name
 	config     ConfigData
 }
 
 func BuildConfig(
-	schemaSlug *models.Slug,
-	slug *models.Slug,
-	name *Name,
+	schemaSlug models.Slug,
+	slug models.Slug,
+	name Name,
 	config ConfigData,
 ) (*Config, error) {
 	if len(config) == 0 {
@@ -35,8 +35,8 @@ func BuildConfig(
 }
 
 func NewConfig(
-	schemaSlug *models.Slug,
-	name *Name,
+	schemaSlug models.Slug,
+	name Name,
 	config ConfigData,
 ) (*Config, error) {
 	slug, err := models.NewSlug(name.Value())
@@ -47,15 +47,15 @@ func NewConfig(
 	return BuildConfig(schemaSlug, slug, name, config)
 }
 
-func (c *Config) SchemaSlug() *models.Slug {
+func (c *Config) SchemaSlug() models.Slug {
 	return c.schemaSlug
 }
 
-func (c *Config) Slug() *models.Slug {
+func (c *Config) Slug() models.Slug {
 	return c.slug
 }
 
-func (c *Config) Name() *Name {
+func (c *Config) Name() Name {
 	return c.name
 }
 
