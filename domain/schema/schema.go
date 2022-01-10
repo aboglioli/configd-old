@@ -75,27 +75,43 @@ func (s *Schema) Validate(c config.ConfigData) error {
 }
 
 func (s *Schema) ToMap() map[string]interface{} {
+	return propsToMap(s.props)
+}
+
+func propsToMap(ps map[string]*props.Prop) map[string]interface{} {
 	m := make(map[string]interface{})
 
-	for k, p := range s.props {
-		// Basic prop types
-		var interval map[string]interface{}
-		if p.Interval() != nil {
-			interval = map[string]interface{}{
-				"min": p.Interval().Min(),
-				"max": p.Interval().Max(),
+	for k, p := range ps {
+		var s map[string]interface{}
+
+		if p.Type() == props.OBJECT {
+			s = propsToMap(p.Props())
+		} else {
+			// Basic prop types
+			var interval map[string]interface{}
+			if p.Interval() != nil {
+				interval = map[string]interface{}{
+					"min": p.Interval().Min(),
+					"max": p.Interval().Max(),
+				}
+			}
+
+			s = map[string]interface{}{
+				SCHEMA_KEY: map[string]interface{}{
+					"type":     p.Type(),
+					"default":  p.Default(),
+					"required": p.IsRequired(),
+					"enum":     p.Enum(),
+					"regex":    p.Regex(),
+					"interval": interval,
+				},
 			}
 		}
 
-		m[k] = map[string]interface{}{
-			SCHEMA_KEY: map[string]interface{}{
-				"type":     p.Type(),
-				"default":  p.Default(),
-				"required": p.IsRequired(),
-				"enum":     p.Enum(),
-				"regex":    p.Regex(),
-				"interval": interval,
-			},
+		if p.IsArray() {
+			m[k] = []interface{}{s}
+		} else {
+			m[k] = s
 		}
 	}
 
