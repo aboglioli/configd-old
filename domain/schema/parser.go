@@ -28,7 +28,7 @@ type propSchema struct {
 	Interval *propSchemaInterval `mapstructure:"interval"`
 }
 
-func PropsFromJson(data string) (map[]*props.Prop, error) {
+func PropsFromJson(data string) ([]*props.Prop, error) {
 	var m map[string]interface{}
 	if err := json.Unmarshal([]byte(data), &m); err != nil {
 		return nil, err

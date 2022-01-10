@@ -322,15 +322,25 @@ func TestPropsFromJson(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			props, err := PropsFromJson(test.json)
+			ps, err := PropsFromJson(test.json)
 			expectedProps := test.expected(&test)
-
-			assert.Equal(t, expectedProps, props)
 
 			if test.err {
 				assert.NotNil(t, err)
 			} else {
 				assert.Nil(t, err)
+
+				propsMap := make(map[string]*props.Prop)
+				for _, p := range ps {
+					propsMap[p.Name()] = p
+				}
+
+				expectedPropsMap := make(map[string]*props.Prop)
+				for _, p := range expectedProps {
+					expectedPropsMap[p.Name()] = p
+				}
+
+				assert.Equal(t, expectedPropsMap, propsMap)
 			}
 		})
 	}
@@ -370,15 +380,25 @@ func TestPropsFromMap(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			props, err := PropsFromMap(test.m)
+			ps, err := PropsFromMap(test.m)
 			expectedProps := test.expected(&test)
-
-			assert.Equal(t, expectedProps, props)
 
 			if test.err {
 				assert.NotNil(t, err)
 			} else {
 				assert.Nil(t, err)
+
+				propsMap := make(map[string]*props.Prop)
+				for _, p := range ps {
+					propsMap[p.Name()] = p
+				}
+
+				expectedPropsMap := make(map[string]*props.Prop)
+				for _, p := range expectedProps {
+					expectedPropsMap[p.Name()] = p
+				}
+
+				assert.Equal(t, expectedPropsMap, propsMap)
 			}
 		})
 	}
