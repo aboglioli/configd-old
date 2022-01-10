@@ -12,12 +12,14 @@ type AggregateRoot struct {
 	createdAt time.Time
 	updatedAt time.Time
 	deletedAt *time.Time
+	version   uint
 }
 
 func BuildAggregateRoot(
 	createdAt time.Time,
 	updatedAt time.Time,
 	deletedAt *time.Time,
+	version uint,
 ) (*AggregateRoot, error) {
 	if updatedAt.Sub(createdAt) < 0 {
 		return nil, fmt.Errorf(
@@ -32,11 +34,12 @@ func BuildAggregateRoot(
 		createdAt: createdAt,
 		updatedAt: updatedAt,
 		deletedAt: deletedAt,
+		version:   version,
 	}, nil
 }
 
 func NewAggregateRoot() (*AggregateRoot, error) {
-	return BuildAggregateRoot(time.Now(), time.Now(), nil)
+	return BuildAggregateRoot(time.Now(), time.Now(), nil, 1)
 }
 
 func (a *AggregateRoot) Events() []*events.Event {
@@ -53,6 +56,11 @@ func (a *AggregateRoot) CreatedAt() time.Time {
 
 func (a *AggregateRoot) UpdatedAt() time.Time {
 	return a.updatedAt
+}
+
+func (a *AggregateRoot) Update() {
+	a.updatedAt = time.Now()
+	a.version++
 }
 
 func (a *AggregateRoot) DeletedAt() *time.Time {

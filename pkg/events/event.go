@@ -70,8 +70,3 @@ func (e *Event) Timestamp() time.Time {
 func (e *Event) Version() uint {
 	return e.version
 }
-
-func (e *Event) WithVersion(version uint) *Event {
-	e.version = version
-	return e
-}
