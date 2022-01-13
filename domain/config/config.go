@@ -53,7 +53,7 @@ func NewConfig(
 	return BuildConfig(schemaId, slug, name, config)
 }
 
-func (c *Config) Base() models.PublicAggregateRoot {
+func (c *Config) Base() *models.AggregateRoot {
 	return c.agg
 }
 

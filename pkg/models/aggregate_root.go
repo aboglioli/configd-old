@@ -7,17 +7,6 @@ import (
 	"github.com/aboglioli/configd/pkg/events"
 )
 
-type PublicAggregateRoot interface {
-	Id() Id
-	CreatedAt() time.Time
-	UpdatedAt() time.Time
-	DeletedAt() *time.Time
-	Events() []events.Event
-	Version() uint
-}
-
-var _ PublicAggregateRoot = (*AggregateRoot)(nil)
-
 type AggregateRoot struct {
 	id Id
 
@@ -77,6 +66,7 @@ func (a *AggregateRoot) UpdatedAt() time.Time {
 
 func (a *AggregateRoot) Update() {
 	a.updatedAt = time.Now()
+	a.version++
 }
 
 func (a *AggregateRoot) DeletedAt() *time.Time {

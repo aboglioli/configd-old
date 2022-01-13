@@ -46,7 +46,7 @@ func NewSchema(id models.Id, name Name, ps ...*props.Prop) (*Schema, error) {
 	return BuildSchema(id, name, ps...)
 }
 
-func (s *Schema) Base() models.PublicAggregateRoot {
+func (s *Schema) Base() *models.AggregateRoot {
 	return s.agg
 }
 
@@ -94,11 +94,6 @@ func (s *Schema) Validate(c config.ConfigData) error {
 
 func (s *Schema) ToMap() map[string]interface{} {
 	return propsToMap(s.props)
-}
-
-func (s *Schema) Delete() error {
-	s.agg.Delete()
-	return nil
 }
 
 func propsToMap(ps map[string]*props.Prop) map[string]interface{} {
