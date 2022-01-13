@@ -42,7 +42,7 @@ func NewSchema(id models.Id, name Name, ps ...*props.Prop) (*Schema, error) {
 	return BuildSchema(id, name, ps...)
 }
 
-func (s *Schema) Base() *models.AggregateRoot {
+func (s *Schema) Base() models.ReadOnlyAggregateRoot {
 	return s.agg
 }
 

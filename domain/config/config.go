@@ -49,7 +49,7 @@ func NewConfig(
 	return BuildConfig(id, schemaId, name, config)
 }
 
-func (c *Config) Base() *models.AggregateRoot {
+func (c *Config) Base() models.ReadOnlyAggregateRoot {
 	return c.agg
 }
 

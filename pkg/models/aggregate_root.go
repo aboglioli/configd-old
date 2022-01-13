@@ -7,6 +7,17 @@ import (
 	"github.com/aboglioli/configd/pkg/events"
 )
 
+type ReadOnlyAggregateRoot interface {
+	Id() Id
+	CreatedAt() time.Time
+	UpdatedAt() time.Time
+	DeletedAt() *time.Time
+	Events() []events.Event
+	Version() uint
+}
+
+var _ ReadOnlyAggregateRoot = (*AggregateRoot)(nil)
+
 type AggregateRoot struct {
 	id Id
 
