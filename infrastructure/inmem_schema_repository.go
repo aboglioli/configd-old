@@ -1,6 +1,7 @@
 package infrastructure
 
 import (
+	"context"
 	"sync"
 
 	"github.com/aboglioli/configd/domain/schema"
@@ -20,7 +21,7 @@ func NewInMemSchemaRepository() *inMemSchemaRepository {
 	}
 }
 
-func (r *inMemSchemaRepository) FindById(slug models.Id) (*schema.Schema, error) {
+func (r *inMemSchemaRepository) FindById(ctx context.Context, slug models.Id) (*schema.Schema, error) {
 	r.mux.Lock()
 	defer r.mux.Unlock()
 
@@ -31,7 +32,7 @@ func (r *inMemSchemaRepository) FindById(slug models.Id) (*schema.Schema, error)
 	return nil, schema.ErrNotFound
 }
 
-func (r *inMemSchemaRepository) Save(schema *schema.Schema) error {
+func (r *inMemSchemaRepository) Save(ctx context.Context, schema *schema.Schema) error {
 	r.mux.Lock()
 	defer r.mux.Unlock()
 
@@ -40,7 +41,7 @@ func (r *inMemSchemaRepository) Save(schema *schema.Schema) error {
 	return nil
 }
 
-func (r *inMemSchemaRepository) Delete(slug models.Id) error {
+func (r *inMemSchemaRepository) Delete(ctx context.Context, slug models.Id) error {
 	r.mux.Lock()
 	defer r.mux.Unlock()
 

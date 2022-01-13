@@ -5,6 +5,7 @@ import (
 
 	"github.com/aboglioli/configd/domain/config"
 	"github.com/aboglioli/configd/domain/props"
+	"github.com/aboglioli/configd/pkg/models"
 	"github.com/aboglioli/configd/pkg/utils"
 	"github.com/stretchr/testify/assert"
 )
@@ -29,7 +30,11 @@ func TestValidateSchema(t *testing.T) {
 				n, err := NewName(t.name)
 				utils.Ok(err)
 
-				s, err := NewSchema(n, str)
+				id, err := models.NewSlug(n.Value())
+				utils.Ok(err)
+
+				s, err := NewSchema(id, n, str)
+				utils.Ok(err)
 
 				return s
 			},
@@ -50,7 +55,11 @@ func TestValidateSchema(t *testing.T) {
 				n, err := NewName(t.name)
 				utils.Ok(err)
 
-				s, err := NewSchema(n, obj)
+				id, err := models.NewSlug(n.Value())
+				utils.Ok(err)
+
+				s, err := NewSchema(id, n, obj)
+				utils.Ok(err)
 
 				return s
 			},
@@ -73,7 +82,11 @@ func TestValidateSchema(t *testing.T) {
 				n, err := NewName(t.name)
 				utils.Ok(err)
 
-				s, err := NewSchema(n, obj)
+				id, err := models.NewSlug(n.Value())
+				utils.Ok(err)
+
+				s, err := NewSchema(id, n, obj)
+				utils.Ok(err)
 
 				return s
 			},
@@ -93,7 +106,11 @@ func TestValidateSchema(t *testing.T) {
 				n, err := NewName(t.name)
 				utils.Ok(err)
 
-				s, err := NewSchema(n, env)
+				id, err := models.NewSlug(n.Value())
+				utils.Ok(err)
+
+				s, err := NewSchema(id, n, env)
+				utils.Ok(err)
 
 				return s
 			},
@@ -111,7 +128,11 @@ func TestValidateSchema(t *testing.T) {
 				n, err := NewName(t.name)
 				utils.Ok(err)
 
-				s, err := NewSchema(n, strs)
+				id, err := models.NewSlug(n.Value())
+				utils.Ok(err)
+
+				s, err := NewSchema(id, n, strs)
+				utils.Ok(err)
 
 				return s
 			},
@@ -129,7 +150,11 @@ func TestValidateSchema(t *testing.T) {
 				n, err := NewName(t.name)
 				utils.Ok(err)
 
-				s, err := NewSchema(n, env)
+				id, err := models.NewSlug(n.Value())
+				utils.Ok(err)
+
+				s, err := NewSchema(id, n, env)
+				utils.Ok(err)
 
 				return s
 			},
@@ -153,7 +178,11 @@ func TestValidateSchema(t *testing.T) {
 				n, err := NewName(t.name)
 				utils.Ok(err)
 
-				s, err := NewSchema(n, obj)
+				id, err := models.NewSlug(n.Value())
+				utils.Ok(err)
+
+				s, err := NewSchema(id, n, obj)
+				utils.Ok(err)
 
 				return s
 			},
@@ -177,7 +206,11 @@ func TestValidateSchema(t *testing.T) {
 				n, err := NewName(t.name)
 				utils.Ok(err)
 
-				s, err := NewSchema(n, obj)
+				id, err := models.NewSlug(n.Value())
+				utils.Ok(err)
+
+				s, err := NewSchema(id, n, obj)
+				utils.Ok(err)
 
 				return s
 			},
@@ -212,7 +245,11 @@ func TestValidateSchema(t *testing.T) {
 				n, err := NewName(t.name)
 				utils.Ok(err)
 
-				s, err := NewSchema(n, integers, strings, array)
+				id, err := models.NewSlug(n.Value())
+				utils.Ok(err)
+
+				s, err := NewSchema(id, n, integers, strings, array)
+				utils.Ok(err)
 
 				return s
 			},
@@ -264,7 +301,11 @@ func TestValidateSchema(t *testing.T) {
 				n, err := NewName(t.name)
 				utils.Ok(err)
 
-				s, err := NewSchema(n, integers, strings, array)
+				id, err := models.NewSlug(n.Value())
+				utils.Ok(err)
+
+				s, err := NewSchema(id, n, integers, strings, array)
+				utils.Ok(err)
 
 				return s
 			},
@@ -335,12 +376,10 @@ func TestSchemaToMap(t *testing.T) {
 
 				n, err := NewName(t.name)
 
-				s, err := NewSchema(
-					n,
-					str,
-					int,
-					float,
-				)
+				id, err := models.NewSlug(n.Value())
+				utils.Ok(err)
+
+				s, err := NewSchema(id, n, str, int, float)
 				utils.Ok(err)
 
 				return s
@@ -408,12 +447,12 @@ func TestSchemaToMap(t *testing.T) {
 				utils.Ok(err)
 
 				n, err := NewName(t.name)
+				utils.Ok(err)
 
-				s, err := NewSchema(
-					n,
-					obj1,
-					obj2,
-				)
+				id, err := models.NewSlug(n.Value())
+				utils.Ok(err)
+
+				s, err := NewSchema(id, n, obj1, obj2)
 				utils.Ok(err)
 
 				return s
@@ -488,12 +527,12 @@ func TestSchemaToMap(t *testing.T) {
 				utils.Ok(err)
 
 				n, err := NewName(t.name)
+				utils.Ok(err)
 
-				s, err := NewSchema(
-					n,
-					objs,
-					ints,
-				)
+				id, err := models.NewSlug(n.Value())
+				utils.Ok(err)
+
+				s, err := NewSchema(id, n, objs, ints)
 				utils.Ok(err)
 
 				return s

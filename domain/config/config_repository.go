@@ -1,6 +1,7 @@
 package config
 
 import (
+	"context"
 	"errors"
 
 	"github.com/aboglioli/configd/pkg/models"
@@ -11,8 +12,8 @@ var (
 )
 
 type ConfigRepository interface {
-	FindById(slug models.Id) (*Config, error)
-	FindBySchemaId(schemaId models.Id) ([]*Config, error)
-	Save(config *Config) error
-	Delete(slug models.Id) error
+	FindById(ctx context.Context, slug models.Id) (*Config, error)
+	FindBySchemaId(ctx context.Context, schemaId models.Id) ([]*Config, error)
+	Save(ctx context.Context, config *Config) error
+	Delete(ctx context.Context, slug models.Id) error
 }

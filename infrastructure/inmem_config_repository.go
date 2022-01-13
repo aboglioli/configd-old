@@ -1,6 +1,7 @@
 package infrastructure
 
 import (
+	"context"
 	"sync"
 
 	"github.com/aboglioli/configd/domain/config"
@@ -20,7 +21,7 @@ func NewInMemConfigRepository() *inMemConfigRepository {
 	}
 }
 
-func (r *inMemConfigRepository) FindById(slug models.Id) (*config.Config, error) {
+func (r *inMemConfigRepository) FindById(ctx context.Context, slug models.Id) (*config.Config, error) {
 	r.mux.Lock()
 	defer r.mux.Unlock()
 
@@ -31,7 +32,7 @@ func (r *inMemConfigRepository) FindById(slug models.Id) (*config.Config, error)
 	return nil, config.ErrNotFound
 }
 
-func (r *inMemConfigRepository) FindBySchemaId(schemaId models.Id) ([]*config.Config, error) {
+func (r *inMemConfigRepository) FindBySchemaId(ctx context.Context, schemaId models.Id) ([]*config.Config, error) {
 	r.mux.Lock()
 	defer r.mux.Unlock()
 
@@ -46,7 +47,7 @@ func (r *inMemConfigRepository) FindBySchemaId(schemaId models.Id) ([]*config.Co
 	return found, nil
 }
 
-func (r *inMemConfigRepository) Save(config *config.Config) error {
+func (r *inMemConfigRepository) Save(ctx context.Context, config *config.Config) error {
 	r.mux.Lock()
 	defer r.mux.Unlock()
 
@@ -55,7 +56,7 @@ func (r *inMemConfigRepository) Save(config *config.Config) error {
 	return nil
 }
 
-func (r *inMemConfigRepository) Delete(slug models.Id) error {
+func (r *inMemConfigRepository) Delete(ctx context.Context, slug models.Id) error {
 	r.mux.Lock()
 	defer r.mux.Unlock()
 

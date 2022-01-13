@@ -16,7 +16,7 @@ type Schema struct {
 	props map[string]*props.Prop
 }
 
-func BuildSchema(slug models.Id, name Name, ps ...*props.Prop) (*Schema, error) {
+func BuildSchema(id models.Id, name Name, ps ...*props.Prop) (*Schema, error) {
 	if len(ps) == 0 {
 		return nil, errors.New("schema does not have props")
 	}
@@ -26,7 +26,7 @@ func BuildSchema(slug models.Id, name Name, ps ...*props.Prop) (*Schema, error) 
 		psMap[p.Name()] = p
 	}
 
-	agg, err := models.NewAggregateRoot(slug)
+	agg, err := models.NewAggregateRoot(id)
 	if err != nil {
 		return nil, err
 	}
@@ -38,13 +38,12 @@ func BuildSchema(slug models.Id, name Name, ps ...*props.Prop) (*Schema, error) 
 	}, nil
 }
 
-func NewSchema(name Name, ps ...*props.Prop) (*Schema, error) {
-	slug, err := models.NewSlug(name.Value())
-	if err != nil {
-		return nil, err
-	}
-
-	return BuildSchema(slug, name, ps...)
+func NewSchema(id models.Id, name Name, ps ...*props.Prop) (*Schema, error) {
+	// slug, err := models.NewSlug(name.Value())
+	// if err != nil {
+	// 	return nil, err
+	// }
+	return BuildSchema(id, name, ps...)
 }
 
 func (s *Schema) Base() models.PublicAggregateRoot {
@@ -55,8 +54,27 @@ func (s *Schema) Name() Name {
 	return s.name
 }
 
+func (s *Schema) ChangeName(name Name) error {
+	s.name = name
+	s.agg.Update()
+
+	return nil
+}
+
 func (s *Schema) Props() map[string]*props.Prop {
 	return s.props
+}
+
+func (s *Schema) ChangeProps(ps ...*props.Prop) error {
+	psMap := make(map[string]*props.Prop)
+	for _, p := range ps {
+		psMap[p.Name()] = p
+	}
+
+	s.props = psMap
+	s.agg.Update()
+
+	return nil
 }
 
 func (s *Schema) Validate(c config.ConfigData) error {
@@ -76,6 +94,11 @@ func (s *Schema) Validate(c config.ConfigData) error {
 
 func (s *Schema) ToMap() map[string]interface{} {
 	return propsToMap(s.props)
+}
+
+func (s *Schema) Delete() error {
+	s.agg.Delete()
+	return nil
 }
 
 func propsToMap(ps map[string]*props.Prop) map[string]interface{} {

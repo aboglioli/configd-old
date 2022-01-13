@@ -1,6 +1,7 @@
 package schema
 
 import (
+	"context"
 	"errors"
 
 	"github.com/aboglioli/configd/pkg/models"
@@ -11,7 +12,7 @@ var (
 )
 
 type SchemaRepository interface {
-	FindById(slug models.Id) (*Schema, error)
-	Save(schema *Schema) error
-	Delete(slug models.Id) error
+	FindById(ctx context.Context, slug models.Id) (*Schema, error)
+	Save(ctx context.Context, schema *Schema) error
+	Delete(ctx context.Context, slug models.Id) error
 }

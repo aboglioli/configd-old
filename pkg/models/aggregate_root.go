@@ -77,11 +77,15 @@ func (a *AggregateRoot) UpdatedAt() time.Time {
 
 func (a *AggregateRoot) Update() {
 	a.updatedAt = time.Now()
-	a.version++
 }
 
 func (a *AggregateRoot) DeletedAt() *time.Time {
 	return a.deletedAt
+}
+
+func (a *AggregateRoot) Delete() {
+	now := time.Now()
+	a.deletedAt = &now
 }
 
 func (a *AggregateRoot) Events() []events.Event {
