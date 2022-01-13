@@ -65,7 +65,6 @@ func (uc *UpdateSchema) Exec(
 	}
 
 	// Save
-	s.Base().Update()
 	if err := uc.schemaRepo.Save(ctx, s); err != nil {
 		return nil, err
 	}

@@ -21,11 +21,11 @@ func NewInMemSchemaRepository() *inMemSchemaRepository {
 	}
 }
 
-func (r *inMemSchemaRepository) FindById(ctx context.Context, slug models.Id) (*schema.Schema, error) {
+func (r *inMemSchemaRepository) FindById(ctx context.Context, id models.Id) (*schema.Schema, error) {
 	r.mux.Lock()
 	defer r.mux.Unlock()
 
-	if s, ok := r.schemas[slug.Value()]; ok {
+	if s, ok := r.schemas[id.Value()]; ok {
 		return s, nil
 	}
 
@@ -41,11 +41,11 @@ func (r *inMemSchemaRepository) Save(ctx context.Context, schema *schema.Schema)
 	return nil
 }
 
-func (r *inMemSchemaRepository) Delete(ctx context.Context, slug models.Id) error {
+func (r *inMemSchemaRepository) Delete(ctx context.Context, id models.Id) error {
 	r.mux.Lock()
 	defer r.mux.Unlock()
 
-	delete(r.schemas, slug.Value())
+	delete(r.schemas, id.Value())
 
 	return nil
 }

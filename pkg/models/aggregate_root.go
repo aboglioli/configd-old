@@ -16,7 +16,8 @@ type AggregateRoot struct {
 
 	events []events.Event
 
-	version uint
+	version        uint
+	versionUpdated bool
 }
 
 func BuildAggregateRoot(
@@ -66,7 +67,12 @@ func (a *AggregateRoot) UpdatedAt() time.Time {
 
 func (a *AggregateRoot) Update() {
 	a.updatedAt = time.Now()
-	a.version++
+
+	// Allow only updating version once per instance
+	if !a.versionUpdated {
+		a.version += 1
+		a.versionUpdated = true
+	}
 }
 
 func (a *AggregateRoot) DeletedAt() *time.Time {

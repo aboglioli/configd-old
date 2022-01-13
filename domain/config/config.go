@@ -17,7 +17,7 @@ type Config struct {
 }
 
 func BuildConfig(
-	slug models.Id,
+	id models.Id,
 	schemaId models.Id,
 	name Name,
 	config ConfigData,
@@ -26,7 +26,7 @@ func BuildConfig(
 		return nil, errors.New("empty configuration")
 	}
 
-	agg, err := models.NewAggregateRoot(slug)
+	agg, err := models.NewAggregateRoot(id)
 	if err != nil {
 		return nil, err
 	}
@@ -41,16 +41,12 @@ func BuildConfig(
 }
 
 func NewConfig(
+	id models.Id,
 	schemaId models.Id,
 	name Name,
 	config ConfigData,
 ) (*Config, error) {
-	slug, err := models.NewSlug(name.Value())
-	if err != nil {
-		return nil, err
-	}
-
-	return BuildConfig(schemaId, slug, name, config)
+	return BuildConfig(id, schemaId, name, config)
 }
 
 func (c *Config) Base() *models.AggregateRoot {
@@ -65,6 +61,20 @@ func (c *Config) Name() Name {
 	return c.name
 }
 
+func (c *Config) ChangeName(name Name) error {
+	c.name = name
+	c.agg.Update()
+
+	return nil
+}
+
 func (c *Config) Config() ConfigData {
 	return c.config
+}
+
+func (c *Config) ChangeConfig(config ConfigData) error {
+	c.config = config
+	c.agg.Update()
+
+	return nil
 }

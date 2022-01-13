@@ -39,10 +39,6 @@ func BuildSchema(id models.Id, name Name, ps ...*props.Prop) (*Schema, error) {
 }
 
 func NewSchema(id models.Id, name Name, ps ...*props.Prop) (*Schema, error) {
-	// slug, err := models.NewSlug(name.Value())
-	// if err != nil {
-	// 	return nil, err
-	// }
 	return BuildSchema(id, name, ps...)
 }
 

@@ -37,7 +37,7 @@ func (uc *CreateSchema) Exec(
 	cmd *CreateSchemaCommand,
 ) (*CreateSchemaResponse, error) {
 	// Name
-	n, err := schema.NewName(cmd.Name)
+	name, err := schema.NewName(cmd.Name)
 	if err != nil {
 		return nil, err
 	}
@@ -47,7 +47,7 @@ func (uc *CreateSchema) Exec(
 	if cmd.Id != nil {
 		id, err = models.NewSlug(*cmd.Id)
 	} else {
-		id, err = models.NewSlug(n.Value())
+		id, err = models.NewSlug(name.Value())
 	}
 	if err != nil {
 		return nil, err
@@ -63,7 +63,7 @@ func (uc *CreateSchema) Exec(
 		return nil, err
 	}
 
-	s, err := schema.NewSchema(id, n, props...)
+	s, err := schema.NewSchema(id, name, props...)
 	if err != nil {
 		return nil, err
 	}

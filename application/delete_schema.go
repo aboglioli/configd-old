@@ -42,7 +42,6 @@ func (uc *DeleteSchema) Exec(
 	}
 
 	// Delete
-	s.Base().Delete()
 	if err := uc.schemaRepo.Delete(ctx, s.Base().Id()); err != nil {
 		return nil, err
 	}

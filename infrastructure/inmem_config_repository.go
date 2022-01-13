@@ -21,11 +21,11 @@ func NewInMemConfigRepository() *inMemConfigRepository {
 	}
 }
 
-func (r *inMemConfigRepository) FindById(ctx context.Context, slug models.Id) (*config.Config, error) {
+func (r *inMemConfigRepository) FindById(ctx context.Context, id models.Id) (*config.Config, error) {
 	r.mux.Lock()
 	defer r.mux.Unlock()
 
-	if s, ok := r.configs[slug.Value()]; ok {
+	if s, ok := r.configs[id.Value()]; ok {
 		return s, nil
 	}
 
@@ -56,11 +56,11 @@ func (r *inMemConfigRepository) Save(ctx context.Context, config *config.Config)
 	return nil
 }
 
-func (r *inMemConfigRepository) Delete(ctx context.Context, slug models.Id) error {
+func (r *inMemConfigRepository) Delete(ctx context.Context, id models.Id) error {
 	r.mux.Lock()
 	defer r.mux.Unlock()
 
-	delete(r.configs, slug.Value())
+	delete(r.configs, id.Value())
 
 	return nil
 }

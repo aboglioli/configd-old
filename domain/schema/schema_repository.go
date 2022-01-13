@@ -12,7 +12,7 @@ var (
 )
 
 type SchemaRepository interface {
-	FindById(ctx context.Context, slug models.Id) (*Schema, error)
+	FindById(ctx context.Context, id models.Id) (*Schema, error)
 	Save(ctx context.Context, schema *Schema) error
-	Delete(ctx context.Context, slug models.Id) error
+	Delete(ctx context.Context, id models.Id) error
 }
