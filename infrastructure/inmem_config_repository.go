@@ -8,20 +8,20 @@ import (
 	"github.com/aboglioli/configd/pkg/models"
 )
 
-var _ config.ConfigRepository = (*inMemConfigRepository)(nil)
+var _ config.ConfigRepository = (*InMemConfigRepository)(nil)
 
-type inMemConfigRepository struct {
+type InMemConfigRepository struct {
 	mux     sync.Mutex
 	configs map[string]*config.Config
 }
 
-func NewInMemConfigRepository() *inMemConfigRepository {
-	return &inMemConfigRepository{
+func NewInMemConfigRepository() *InMemConfigRepository {
+	return &InMemConfigRepository{
 		configs: make(map[string]*config.Config),
 	}
 }
 
-func (r *inMemConfigRepository) FindById(ctx context.Context, id models.Id) (*config.Config, error) {
+func (r *InMemConfigRepository) FindById(ctx context.Context, id models.Id) (*config.Config, error) {
 	r.mux.Lock()
 	defer r.mux.Unlock()
 
@@ -32,7 +32,7 @@ func (r *inMemConfigRepository) FindById(ctx context.Context, id models.Id) (*co
 	return nil, config.ErrNotFound
 }
 
-func (r *inMemConfigRepository) FindBySchemaId(ctx context.Context, schemaId models.Id) ([]*config.Config, error) {
+func (r *InMemConfigRepository) FindBySchemaId(ctx context.Context, schemaId models.Id) ([]*config.Config, error) {
 	r.mux.Lock()
 	defer r.mux.Unlock()
 
@@ -47,7 +47,7 @@ func (r *inMemConfigRepository) FindBySchemaId(ctx context.Context, schemaId mod
 	return found, nil
 }
 
-func (r *inMemConfigRepository) Save(ctx context.Context, config *config.Config) error {
+func (r *InMemConfigRepository) Save(ctx context.Context, config *config.Config) error {
 	r.mux.Lock()
 	defer r.mux.Unlock()
 
@@ -56,7 +56,7 @@ func (r *inMemConfigRepository) Save(ctx context.Context, config *config.Config)
 	return nil
 }
 
-func (r *inMemConfigRepository) Delete(ctx context.Context, id models.Id) error {
+func (r *InMemConfigRepository) Delete(ctx context.Context, id models.Id) error {
 	r.mux.Lock()
 	defer r.mux.Unlock()
 

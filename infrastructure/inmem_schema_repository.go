@@ -8,20 +8,20 @@ import (
 	"github.com/aboglioli/configd/pkg/models"
 )
 
-var _ schema.SchemaRepository = (*inMemSchemaRepository)(nil)
+var _ schema.SchemaRepository = (*InMemSchemaRepository)(nil)
 
-type inMemSchemaRepository struct {
+type InMemSchemaRepository struct {
 	mux     sync.Mutex
 	schemas map[string]*schema.Schema
 }
 
-func NewInMemSchemaRepository() *inMemSchemaRepository {
-	return &inMemSchemaRepository{
+func NewInMemSchemaRepository() *InMemSchemaRepository {
+	return &InMemSchemaRepository{
 		schemas: make(map[string]*schema.Schema),
 	}
 }
 
-func (r *inMemSchemaRepository) FindById(ctx context.Context, id models.Id) (*schema.Schema, error) {
+func (r *InMemSchemaRepository) FindById(ctx context.Context, id models.Id) (*schema.Schema, error) {
 	r.mux.Lock()
 	defer r.mux.Unlock()
 
@@ -32,7 +32,7 @@ func (r *inMemSchemaRepository) FindById(ctx context.Context, id models.Id) (*sc
 	return nil, schema.ErrNotFound
 }
 
-func (r *inMemSchemaRepository) Save(ctx context.Context, schema *schema.Schema) error {
+func (r *InMemSchemaRepository) Save(ctx context.Context, schema *schema.Schema) error {
 	r.mux.Lock()
 	defer r.mux.Unlock()
 
@@ -41,7 +41,7 @@ func (r *inMemSchemaRepository) Save(ctx context.Context, schema *schema.Schema)
 	return nil
 }
 
-func (r *inMemSchemaRepository) Delete(ctx context.Context, id models.Id) error {
+func (r *InMemSchemaRepository) Delete(ctx context.Context, id models.Id) error {
 	r.mux.Lock()
 	defer r.mux.Unlock()
 
