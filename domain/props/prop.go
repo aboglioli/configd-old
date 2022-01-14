@@ -174,12 +174,19 @@ func (p *Prop) validateWithArray(v interface{}, validateArray bool) error {
 		i32, okInt32 := v.(int32)
 		i64, okInt64 := v.(int64)
 
+		f32, okFloat32 := v.(float32)
+		f64, okFloat64 := v.(float64)
+
 		if !okInt {
 			if okInt32 {
 				i = int(i32)
 			} else if okInt64 {
 				i = int(i64)
-			} else {
+			} else if okFloat32 {
+				i = int(f32)
+			} else if okFloat64 {
+				i = int(f64)
+			}else {
 				return fmt.Errorf("%v is not an integer", v)
 			}
 		}
