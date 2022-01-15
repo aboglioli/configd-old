@@ -186,7 +186,7 @@ func (p *Prop) validateWithArray(v interface{}, validateArray bool) error {
 				i = int(f32)
 			} else if okFloat64 {
 				i = int(f64)
-			}else {
+			} else {
 				return fmt.Errorf("%v is not an integer", v)
 			}
 		}

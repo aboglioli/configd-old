@@ -8,13 +8,11 @@ import (
 	"github.com/aboglioli/configd/pkg/models"
 )
 
-type UpdateConfigCommand struct {
-	Id     string  `json:"id"`
-	Name   *string `json:"name"`
-	Config *config.ConfigData
+type GetConfigCommand struct {
+	Id string `json:"id"`
 }
 
-type UpdateConfigResponse struct {
+type GetConfigResponse struct {
 	Id          string            `json:"id"`
 	SchemaId    string            `json:"schema_id"`
 	Name        string            `json:"name"`
@@ -22,25 +20,25 @@ type UpdateConfigResponse struct {
 	ValidSchema bool              `json:"valid_schema"`
 }
 
-type UpdateConfig struct {
+type GetConfig struct {
 	schemaRepo schema.SchemaRepository
 	configRepo config.ConfigRepository
 }
 
-func NewUpdateConfig(
+func NewGetConfig(
 	schemaRepo schema.SchemaRepository,
 	configRepo config.ConfigRepository,
-) *UpdateConfig {
-	return &UpdateConfig{
-		configRepo: configRepo,
+) *GetConfig {
+	return &GetConfig{
 		schemaRepo: schemaRepo,
+		configRepo: configRepo,
 	}
 }
 
-func (uc *UpdateConfig) Exec(
+func (uc *GetConfig) Exec(
 	ctx context.Context,
-	cmd *UpdateConfigCommand,
-) (*UpdateConfigResponse, error) {
+	cmd *GetConfigCommand,
+) (*GetConfigResponse, error) {
 	id, err := models.BuildId(cmd.Id)
 	if err != nil {
 		return nil, err
@@ -56,30 +54,12 @@ func (uc *UpdateConfig) Exec(
 		return nil, err
 	}
 
-	// Update parameteres
-	if cmd.Name != nil {
-		name, err := config.NewName(*cmd.Name)
-		if err != nil {
-			return nil, err
-		}
-
-		c.ChangeName(name)
-	}
-
-	if cmd.Config != nil {
-		c.ChangeConfig(*cmd.Config)
-	}
-
-	if err := uc.configRepo.Save(ctx, c); err != nil {
-		return nil, err
-	}
-
 	validSchema := true
 	if err := s.Validate(c.Config()); err != nil {
 		validSchema = false
 	}
 
-	return &UpdateConfigResponse{
+	return &GetConfigResponse{
 		Id:          c.Base().Id().Value(),
 		SchemaId:    c.SchemaId().Value(),
 		Name:        c.Name().Value(),

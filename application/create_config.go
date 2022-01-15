@@ -17,8 +17,8 @@ type CreateConfigCommand struct {
 }
 
 type CreateConfigResponse struct {
-	SchemaId    string            `json:"schema_id"`
 	Id          string            `json:"id"`
+	SchemaId    string            `json:"schema_id"`
 	Name        string            `json:"name"`
 	Config      config.ConfigData `json:"config"`
 	ValidSchema bool              `json:"valid_schema"`
