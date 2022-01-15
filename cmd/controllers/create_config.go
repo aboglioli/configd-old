@@ -19,8 +19,6 @@ func CreateConfig(c *gin.Context) {
 		return
 	}
 
-	cmd.SchemaId = c.Param("schema_id")
-
 	res, err := serv.Exec(context.Background(), &cmd)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{

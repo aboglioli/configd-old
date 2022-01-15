@@ -16,7 +16,7 @@ func main() {
 
 	// Config
 	s.GET("/config/:config_id", controllers.GetConfig)
-	s.POST("/schema/:schema_id/config", controllers.CreateConfig)
+	s.POST("/config", controllers.CreateConfig)
 	s.PUT("/config/:config_id", controllers.UpdateConfig)
 	s.DELETE("/config/:config_id", controllers.DeleteConfig)
 
