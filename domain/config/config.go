@@ -3,6 +3,7 @@ package config
 import (
 	"errors"
 
+	"github.com/aboglioli/configd/pkg/events"
 	"github.com/aboglioli/configd/pkg/models"
 )
 
@@ -44,7 +45,29 @@ func NewConfig(
 	name Name,
 	config ConfigData,
 ) (*Config, error) {
-	return BuildConfig(id, schemaId, name, config)
+	c, err := BuildConfig(id, schemaId, name, config)
+	if err != nil {
+		return nil, err
+	}
+
+	event, err := events.NewEvent(
+		c.agg.Id().Value(),
+		CreatedTopic,
+		Created{
+			Id:        c.agg.Id().Value(),
+			SchemaId:  c.schemaId.Value(),
+			Name:      c.name.Value(),
+			Config:    c.config,
+			ConfigSum: c.config.Hash(),
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	c.agg.RecordEvent(event)
+
+	return c, nil
 }
 
 func (c *Config) Base() models.ReadOnlyAggregateRoot {
@@ -63,6 +86,20 @@ func (c *Config) ChangeName(name Name) error {
 	c.name = name
 	c.agg.Update()
 
+	event, err := events.NewEvent(
+		c.agg.Id().Value(),
+		NameChangedTopic,
+		NameChanged{
+			Id:   c.agg.Id().Value(),
+			Name: c.name.Value(),
+		},
+	)
+	if err != nil {
+		return err
+	}
+
+	c.agg.RecordEvent(event)
+
 	return nil
 }
 
@@ -73,6 +110,21 @@ func (c *Config) Config() ConfigData {
 func (c *Config) ChangeConfig(config ConfigData) error {
 	c.config = config
 	c.agg.Update()
+
+	event, err := events.NewEvent(
+		c.agg.Id().Value(),
+		ConfigChangedTopic,
+		ConfigChanged{
+			Id:        c.agg.Id().Value(),
+			Config:    c.config,
+			ConfigSum: c.config.Hash(),
+		},
+	)
+	if err != nil {
+		return err
+	}
+
+	c.agg.RecordEvent(event)
 
 	return nil
 }

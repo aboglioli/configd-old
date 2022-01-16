@@ -29,6 +29,7 @@ func BuildEvent(
 		topic:     topic,
 		payload:   payload,
 		timestamp: timestamp,
+		version:   version,
 	}, nil
 }
 

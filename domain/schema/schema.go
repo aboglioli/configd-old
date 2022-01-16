@@ -6,6 +6,7 @@ import (
 
 	"github.com/aboglioli/configd/domain/config"
 	"github.com/aboglioli/configd/domain/props"
+	"github.com/aboglioli/configd/pkg/events"
 	"github.com/aboglioli/configd/pkg/models"
 )
 
@@ -39,7 +40,27 @@ func BuildSchema(id models.Id, name Name, ps ...*props.Prop) (*Schema, error) {
 }
 
 func NewSchema(id models.Id, name Name, ps ...*props.Prop) (*Schema, error) {
-	return BuildSchema(id, name, ps...)
+	s, err := BuildSchema(id, name, ps...)
+	if err != nil {
+		return nil, err
+	}
+
+	event, err := events.NewEvent(
+		s.agg.Id().Value(),
+		CreatedTopic,
+		Created{
+			Id:    s.agg.Id().Value(),
+			Name:  s.name.Value(),
+			Props: s.ToMap(),
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	s.agg.RecordEvent(event)
+
+	return s, nil
 }
 
 func (s *Schema) Base() models.ReadOnlyAggregateRoot {
@@ -53,6 +74,20 @@ func (s *Schema) Name() Name {
 func (s *Schema) ChangeName(name Name) error {
 	s.name = name
 	s.agg.Update()
+
+	event, err := events.NewEvent(
+		s.agg.Id().Value(),
+		NameChangedTopic,
+		NameChanged{
+			Id:   s.agg.Id().Value(),
+			Name: s.name.Value(),
+		},
+	)
+	if err != nil {
+		return err
+	}
+
+	s.agg.RecordEvent(event)
 
 	return nil
 }
@@ -69,6 +104,20 @@ func (s *Schema) ChangeProps(ps ...*props.Prop) error {
 
 	s.props = psMap
 	s.agg.Update()
+
+	event, err := events.NewEvent(
+		s.agg.Id().Value(),
+		PropsChangedTopic,
+		PropsChanged{
+			Id:    s.agg.Id().Value(),
+			Props: s.ToMap(),
+		},
+	)
+	if err != nil {
+		return err
+	}
+
+	s.agg.RecordEvent(event)
 
 	return nil
 }

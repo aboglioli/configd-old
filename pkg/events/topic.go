@@ -1,7 +1,6 @@
 package events
 
 import (
-	"errors"
 	"strings"
 )
 
@@ -9,20 +8,20 @@ type Topic struct {
 	topic string
 }
 
-func NewTopic(path ...string) (Topic, error) {
+func NewTopic(path ...string) Topic {
 	if len(path) == 0 {
-		return Topic{}, errors.New("empty topic")
+		panic("empty topic")
 	}
 
 	for _, p := range path {
 		if p == "" {
-			return Topic{}, errors.New("empty topic path")
+			panic("empty topic path")
 		}
 	}
 
 	return Topic{
 		topic: strings.Join(path, "."),
-	}, nil
+	}
 }
 
 func (t Topic) Value() string {
