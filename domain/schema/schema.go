@@ -47,8 +47,8 @@ func NewSchema(id models.Id, name Name, ps ...*props.Prop) (*Schema, error) {
 
 	event, err := events.NewEvent(
 		s.agg.Id().Value(),
-		CreatedTopic,
-		Created{
+		SchemaCreatedTopic,
+		SchemaCreated{
 			Id:    s.agg.Id().Value(),
 			Name:  s.name.Value(),
 			Props: s.ToMap(),
@@ -77,8 +77,8 @@ func (s *Schema) ChangeName(name Name) error {
 
 	event, err := events.NewEvent(
 		s.agg.Id().Value(),
-		NameChangedTopic,
-		NameChanged{
+		SchemaNameChangedTopic,
+		SchemaNameChanged{
 			Id:   s.agg.Id().Value(),
 			Name: s.name.Value(),
 		},
@@ -107,8 +107,8 @@ func (s *Schema) ChangeProps(ps ...*props.Prop) error {
 
 	event, err := events.NewEvent(
 		s.agg.Id().Value(),
-		PropsChangedTopic,
-		PropsChanged{
+		SchemaPropsChangedTopic,
+		SchemaPropsChanged{
 			Id:    s.agg.Id().Value(),
 			Props: s.ToMap(),
 		},

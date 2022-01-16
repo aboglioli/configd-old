@@ -5,23 +5,23 @@ import (
 )
 
 var (
-	CreatedTopic      = events.NewTopic("schema", "created")
-	NameChangedTopic  = events.NewTopic("schema", "name_changed")
-	PropsChangedTopic = events.NewTopic("schema", "props_changed")
+	SchemaCreatedTopic      = events.NewTopic("schema", "created")
+	SchemaNameChangedTopic  = events.NewTopic("schema", "name_changed")
+	SchemaPropsChangedTopic = events.NewTopic("schema", "props_changed")
 )
 
-type Created struct {
+type SchemaCreated struct {
 	Id    string                 `json:"id"`
 	Name  string                 `json:"name"`
 	Props map[string]interface{} `json:"props"`
 }
 
-type NameChanged struct {
+type SchemaNameChanged struct {
 	Id   string `json:"id"`
 	Name string `json:"name"`
 }
 
-type PropsChanged struct {
+type SchemaPropsChanged struct {
 	Id    string                 `json:"id"`
 	Props map[string]interface{} `json:"props"`
 }

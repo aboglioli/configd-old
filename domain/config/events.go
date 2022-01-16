@@ -5,12 +5,12 @@ import (
 )
 
 var (
-	CreatedTopic       = events.NewTopic("config", "created")
-	NameChangedTopic   = events.NewTopic("config", "name_changed")
-	ConfigChangedTopic = events.NewTopic("config", "config_changed")
+	ConfigCreatedTopic       = events.NewTopic("config", "created")
+	ConfigNameChangedTopic   = events.NewTopic("config", "name_changed")
+	ConfigConfigChangedTopic = events.NewTopic("config", "config_changed")
 )
 
-type Created struct {
+type ConfigCreated struct {
 	Id        string                 `json:"id"`
 	SchemaId  string                 `json:"schema_id"`
 	Name      string                 `json:"name"`
@@ -18,12 +18,12 @@ type Created struct {
 	ConfigSum string                 `json:"config_sum"`
 }
 
-type NameChanged struct {
+type ConfigNameChanged struct {
 	Id   string `json:"id"`
 	Name string `json:"name"`
 }
 
-type ConfigChanged struct {
+type ConfigConfigChanged struct {
 	Id        string                 `json:"id"`
 	Config    map[string]interface{} `json:"config"`
 	ConfigSum string                 `json:"config_sum"`

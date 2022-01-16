@@ -52,8 +52,8 @@ func NewConfig(
 
 	event, err := events.NewEvent(
 		c.agg.Id().Value(),
-		CreatedTopic,
-		Created{
+		ConfigCreatedTopic,
+		ConfigCreated{
 			Id:        c.agg.Id().Value(),
 			SchemaId:  c.schemaId.Value(),
 			Name:      c.name.Value(),
@@ -88,8 +88,8 @@ func (c *Config) ChangeName(name Name) error {
 
 	event, err := events.NewEvent(
 		c.agg.Id().Value(),
-		NameChangedTopic,
-		NameChanged{
+		ConfigNameChangedTopic,
+		ConfigNameChanged{
 			Id:   c.agg.Id().Value(),
 			Name: c.name.Value(),
 		},
@@ -113,8 +113,8 @@ func (c *Config) ChangeConfig(config ConfigData) error {
 
 	event, err := events.NewEvent(
 		c.agg.Id().Value(),
-		ConfigChangedTopic,
-		ConfigChanged{
+		ConfigConfigChangedTopic,
+		ConfigConfigChanged{
 			Id:        c.agg.Id().Value(),
 			Config:    c.config,
 			ConfigSum: c.config.Hash(),
