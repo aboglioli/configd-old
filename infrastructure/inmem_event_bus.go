@@ -43,4 +43,3 @@ func (eb *InMemEventBus) Subscribe(fn events.SubscriptionFunc, topics ...events.
 		eb.subscriptions[topic.Value()] = subs
 	}
 }
-

@@ -6,8 +6,6 @@ import (
 	"github.com/aboglioli/configd/pkg/models"
 )
 
-type ConfigData map[string]interface{}
-
 type Config struct {
 	agg *models.AggregateRoot
 
