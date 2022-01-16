@@ -22,6 +22,7 @@ type CreateConfigResponse struct {
 	Name        string            `json:"name"`
 	Config      config.ConfigData `json:"config"`
 	ValidSchema bool              `json:"valid_schema"`
+	ConfigSum   string            `json:"config_sum"`
 }
 
 type CreateConfig struct {
@@ -97,5 +98,6 @@ func (uc *CreateConfig) Exec(
 		Name:        c.Name().Value(),
 		Config:      c.Config(),
 		ValidSchema: validSchema,
+		ConfigSum:   c.Config().Hash(),
 	}, nil
 }

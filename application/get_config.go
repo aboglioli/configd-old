@@ -18,6 +18,7 @@ type GetConfigResponse struct {
 	Name        string            `json:"name"`
 	Config      config.ConfigData `json:"config"`
 	ValidSchema bool              `json:"valid_schema"`
+	ConfigSum   string            `json:"config_sum"`
 }
 
 type GetConfig struct {
@@ -65,5 +66,6 @@ func (uc *GetConfig) Exec(
 		Name:        c.Name().Value(),
 		Config:      c.Config(),
 		ValidSchema: validSchema,
+		ConfigSum:   c.Config().Hash(),
 	}, nil
 }

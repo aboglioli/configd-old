@@ -20,6 +20,7 @@ type UpdateConfigResponse struct {
 	Name        string            `json:"name"`
 	Config      config.ConfigData `json:"config"`
 	ValidSchema bool              `json:"valid_schema"`
+	ConfigSum   string            `json:"config_sum"`
 }
 
 type UpdateConfig struct {
@@ -85,5 +86,6 @@ func (uc *UpdateConfig) Exec(
 		Name:        c.Name().Value(),
 		Config:      c.Config(),
 		ValidSchema: validSchema,
+		ConfigSum:   c.Config().Hash(),
 	}, nil
 }
