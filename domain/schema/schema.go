@@ -17,7 +17,11 @@ type Schema struct {
 	props map[string]*props.Prop
 }
 
-func BuildSchema(id models.Id, name Name, ps ...*props.Prop) (*Schema, error) {
+func BuildSchema(
+	id models.Id,
+	name Name,
+	ps ...*props.Prop,
+) (*Schema, error) {
 	if len(ps) == 0 {
 		return nil, errors.New("schema does not have props")
 	}
