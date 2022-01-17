@@ -28,17 +28,20 @@ type CreateConfigResponse struct {
 }
 
 type CreateConfig struct {
-	schemaRepo schema.SchemaRepository
-	configRepo config.ConfigRepository
+	schemaRepo        schema.SchemaRepository
+	configRepo        config.ConfigRepository
+	authorizationRepo security.AuthorizationRepository
 }
 
 func NewCreateConfig(
 	schemaRepo schema.SchemaRepository,
 	configRepo config.ConfigRepository,
+	authorizationRepo security.AuthorizationRepository,
 ) *CreateConfig {
 	return &CreateConfig{
-		configRepo: configRepo,
-		schemaRepo: schemaRepo,
+		configRepo:        configRepo,
+		schemaRepo:        schemaRepo,
+		authorizationRepo: authorizationRepo,
 	}
 }
 
@@ -94,9 +97,18 @@ func (uc *CreateConfig) Exec(
 		validSchema = false
 	}
 
-	// Create API Keys
+	// Create API Key
 	apiKey, err := security.GenerateApiKey()
 	if err != nil {
+		return nil, err
+	}
+
+	auth, err := security.NewAuthorization(
+		apiKey,
+		c.Base().Id(),
+		security.READ_ONLY_ACCESS,
+	)
+	if err := uc.authorizationRepo.Save(ctx, auth); err != nil {
 		return nil, err
 	}
 

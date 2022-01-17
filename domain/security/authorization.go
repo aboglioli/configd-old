@@ -7,31 +7,31 @@ import (
 type Access string
 
 const (
-	READ_ONLY   Access = "read_only"
-	FULL_ACCESS Access = "full_access"
+	READ_ONLY_ACCESS Access = "read_only"
+	FULL_ACCESS      Access = "full_access"
 )
 
 type Authorization struct {
 	hashedApiKey HashedApiKey
-	configId     models.Id
+	resourceId   models.Id
 	access       Access
 }
 
 func BuildAuthorization(
 	hashedApiKey HashedApiKey,
-	configId models.Id,
+	resourceId models.Id,
 	access Access,
 ) (*Authorization, error) {
 	return &Authorization{
 		hashedApiKey: hashedApiKey,
-		configId:     configId,
+		resourceId:   resourceId,
 		access:       access,
 	}, nil
 }
 
 func NewAuthorization(
 	apiKey ApiKey,
-	configId models.Id,
+	resourceId models.Id,
 	access Access,
 ) (*Authorization, error) {
 	hash, err := apiKey.Hash()
@@ -39,15 +39,15 @@ func NewAuthorization(
 		return nil, err
 	}
 
-	return BuildAuthorization(hash, configId, access)
+	return BuildAuthorization(hash, resourceId, access)
 }
 
 func (a *Authorization) HashedApiKey() HashedApiKey {
 	return a.hashedApiKey
 }
 
-func (a *Authorization) ConfigId() models.Id {
-	return a.configId
+func (a *Authorization) ResourceId() models.Id {
+	return a.resourceId
 }
 
 func (a *Authorization) Access() Access {

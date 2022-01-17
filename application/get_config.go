@@ -5,11 +5,13 @@ import (
 
 	"github.com/aboglioli/configd/domain/config"
 	"github.com/aboglioli/configd/domain/schema"
+	"github.com/aboglioli/configd/domain/security"
 	"github.com/aboglioli/configd/pkg/models"
 )
 
 type GetConfigCommand struct {
-	Id string `json:"id"`
+	Id     string `json:"id"`
+	ApiKey string `json:"api_key"`
 }
 
 type GetConfigResponse struct {
@@ -22,13 +24,15 @@ type GetConfigResponse struct {
 }
 
 type GetConfig struct {
-	schemaRepo schema.SchemaRepository
-	configRepo config.ConfigRepository
+	schemaRepo        schema.SchemaRepository
+	configRepo        config.ConfigRepository
+	authorizationRepo security.AuthorizationRepository
 }
 
 func NewGetConfig(
 	schemaRepo schema.SchemaRepository,
 	configRepo config.ConfigRepository,
+	authorizationRepo security.AuthorizationRepository,
 ) *GetConfig {
 	return &GetConfig{
 		schemaRepo: schemaRepo,
@@ -43,6 +47,26 @@ func (uc *GetConfig) Exec(
 	id, err := models.BuildId(cmd.Id)
 	if err != nil {
 		return nil, err
+	}
+
+	// Check API Key
+	apiKey, err := security.NewApiKey(cmd.ApiKey)
+	if err != nil {
+		return nil, err
+	}
+
+	hashedApiKey, err := apiKey.Hash()
+	if err != nil {
+		return nil, err
+	}
+
+	auth, err := uc.authorizationRepo.FindByApiKey(ctx, hashedApiKey)
+	if err != nil {
+		return nil, ErrUnauthorized
+	}
+
+	if !auth.ResourceId().Equals(id) {
+		return nil, ErrUnauthorized
 	}
 
 	c, err := uc.configRepo.FindById(ctx, id)

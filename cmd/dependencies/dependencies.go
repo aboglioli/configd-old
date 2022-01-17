@@ -10,15 +10,19 @@ var once sync.Once
 var deps *Dependencies
 
 type Dependencies struct {
-	SchemaRepository *infrastructure.InMemSchemaRepository
-	ConfigRepository *infrastructure.InMemConfigRepository
+	EventBus                *infrastructure.InMemEventBus
+	SchemaRepository        *infrastructure.InMemSchemaRepository
+	ConfigRepository        *infrastructure.InMemConfigRepository
+	AuthorizationRepository *infrastructure.InMemAuthorizationRepository
 }
 
 func Get() *Dependencies {
 	once.Do(func() {
 		deps = &Dependencies{
-			SchemaRepository: infrastructure.NewInMemSchemaRepository(),
-			ConfigRepository: infrastructure.NewInMemConfigRepository(),
+			EventBus:                infrastructure.NewInMemEventBus(),
+			SchemaRepository:        infrastructure.NewInMemSchemaRepository(),
+			ConfigRepository:        infrastructure.NewInMemConfigRepository(),
+			AuthorizationRepository: infrastructure.NewInMemAuthorizationRepository(),
 		}
 	})
 

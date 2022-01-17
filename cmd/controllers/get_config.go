@@ -12,10 +12,17 @@ import (
 func GetConfig(c *gin.Context) {
 	deps := dependencies.Get()
 
-	serv := application.NewGetConfig(deps.SchemaRepository, deps.ConfigRepository)
+	apiKeys := c.Request.Header["X-Api-Key"]
+	var apiKey string
+	if len(apiKeys) == 1 {
+		apiKey = apiKeys[0]
+	}
+
+	serv := application.NewGetConfig(deps.SchemaRepository, deps.ConfigRepository, deps.AuthorizationRepository)
 
 	cmd := application.GetConfigCommand{
-		Id: c.Param("config_id"),
+		Id:     c.Param("config_id"),
+		ApiKey: apiKey,
 	}
 
 	res, err := serv.Exec(context.Background(), &cmd)

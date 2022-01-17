@@ -12,7 +12,7 @@ import (
 func CreateConfig(c *gin.Context) {
 	deps := dependencies.Get()
 
-	serv := application.NewCreateConfig(deps.SchemaRepository, deps.ConfigRepository)
+	serv := application.NewCreateConfig(deps.SchemaRepository, deps.ConfigRepository, deps.AuthorizationRepository)
 
 	var cmd application.CreateConfigCommand
 	if err := c.BindJSON(&cmd); err != nil {
