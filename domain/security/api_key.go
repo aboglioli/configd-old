@@ -5,6 +5,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	"math/rand"
+	"time"
 )
 
 var apiKeyCharacters = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
@@ -25,6 +26,9 @@ func NewApiKey(apiKey string) (ApiKey, error) {
 }
 
 func GenerateApiKey() (ApiKey, error) {
+	src := rand.NewSource(time.Now().UnixNano())
+	rand := rand.New(src)
+
 	keys := make([]rune, 36)
 	for i := range keys {
 		keys[i] = apiKeyCharacters[rand.Intn(len(apiKeyCharacters))]

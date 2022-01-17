@@ -35,8 +35,9 @@ func NewGetConfig(
 	authorizationRepo security.AuthorizationRepository,
 ) *GetConfig {
 	return &GetConfig{
-		schemaRepo: schemaRepo,
-		configRepo: configRepo,
+		schemaRepo:        schemaRepo,
+		configRepo:        configRepo,
+		authorizationRepo: authorizationRepo,
 	}
 }
 
