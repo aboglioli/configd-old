@@ -6,6 +6,7 @@ import (
 
 	"github.com/aboglioli/configd/domain/config"
 	"github.com/aboglioli/configd/domain/schema"
+	"github.com/aboglioli/configd/domain/security"
 	"github.com/aboglioli/configd/pkg/models"
 )
 
@@ -23,6 +24,7 @@ type CreateConfigResponse struct {
 	Config      config.ConfigData `json:"config"`
 	ValidSchema bool              `json:"valid_schema"`
 	ConfigSum   string            `json:"config_sum"`
+	ApiKey      string            `json:"api_key"`
 }
 
 type CreateConfig struct {
@@ -92,6 +94,12 @@ func (uc *CreateConfig) Exec(
 		validSchema = false
 	}
 
+	// Create API Keys
+	apiKey, err := security.GenerateApiKey()
+	if err != nil {
+		return nil, err
+	}
+
 	return &CreateConfigResponse{
 		Id:          c.Base().Id().Value(),
 		SchemaId:    c.SchemaId().Value(),
@@ -99,5 +107,6 @@ func (uc *CreateConfig) Exec(
 		Config:      c.Config(),
 		ValidSchema: validSchema,
 		ConfigSum:   c.Config().Hash(),
+		ApiKey:      apiKey.Value(),
 	}, nil
 }

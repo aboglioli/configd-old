@@ -4,7 +4,10 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
+	"math/rand"
 )
+
+var apiKeyCharacters = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
 
 // API Key
 type ApiKey struct {
@@ -19,6 +22,15 @@ func NewApiKey(apiKey string) (ApiKey, error) {
 	return ApiKey{
 		apiKey: apiKey,
 	}, nil
+}
+
+func GenerateApiKey() (ApiKey, error) {
+	keys := make([]rune, 36)
+	for i := range keys {
+		keys[i] = apiKeyCharacters[rand.Intn(len(apiKeyCharacters))]
+	}
+
+	return NewApiKey(string(keys))
 }
 
 func (a ApiKey) Value() string {

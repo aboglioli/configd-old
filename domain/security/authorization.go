@@ -41,3 +41,15 @@ func NewAuthorization(
 
 	return BuildAuthorization(hash, configId, access)
 }
+
+func (a *Authorization) HashedApiKey() HashedApiKey {
+	return a.hashedApiKey
+}
+
+func (a *Authorization) ConfigId() models.Id {
+	return a.configId
+}
+
+func (a *Authorization) Access() Access {
+	return a.access
+}
