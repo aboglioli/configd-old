@@ -60,3 +60,7 @@ func (t Token) ParseData() (TokenData, error) {
 
 	return claims, nil
 }
+
+func (t Token) Value() string {
+	return t.token
+}
