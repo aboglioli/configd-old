@@ -9,13 +9,6 @@ var (
 	ErrInvalidLogin = errors.New("invalid username or password")
 )
 
-type Access string
-
-const (
-	READ_ONLY_ACCESS Access = "read_only"
-	FULL_ACCESS      Access = "full_access"
-)
-
 type User struct {
 	username       Username
 	hashedPassword HashedPassword
