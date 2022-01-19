@@ -20,5 +20,9 @@ func main() {
 	s.PUT("/config/:config_id", controllers.UpdateConfig)
 	s.DELETE("/config/:config_id", controllers.DeleteConfig)
 
+	// User
+	s.POST("/login", controllers.LoginUser)
+	s.POST("/user", controllers.RegisterUser)
+
 	s.Run(":8080")
 }

@@ -14,6 +14,7 @@ type Dependencies struct {
 	SchemaRepository        *infrastructure.InMemSchemaRepository
 	ConfigRepository        *infrastructure.InMemConfigRepository
 	AuthorizationRepository *infrastructure.InMemAuthorizationRepository
+	UserRepository          *infrastructure.InMemUserRepository
 }
 
 func Get() *Dependencies {
@@ -23,6 +24,7 @@ func Get() *Dependencies {
 			SchemaRepository:        infrastructure.NewInMemSchemaRepository(),
 			ConfigRepository:        infrastructure.NewInMemConfigRepository(),
 			AuthorizationRepository: infrastructure.NewInMemAuthorizationRepository(),
+			UserRepository:          infrastructure.NewInMemUserRepository(),
 		}
 	})
 
